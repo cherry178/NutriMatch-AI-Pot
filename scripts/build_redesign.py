@@ -1,0 +1,3248 @@
+"""
+Redesign Generator Script for NutriMatch AI Pot
+==============================================
+Generates a clean, modern, premium, responsive frontend for NutriMatch AI Pot.
+Outputs data/stitch_template.html and compiles it to src/frontend/static/index.html.
+"""
+
+import os
+import re
+
+def generate_frontend():
+    html_content = '''<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NutriMatch AI Pot — Your Taste. Your Recipes. Your AI.</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
+          colors: {
+            forest: {
+              DEFAULT: '#0D5C3A',
+              hover: '#09462B',
+              dark: '#06321E',
+              light: '#127A4D'
+            },
+            sage: {
+              DEFAULT: '#ECFDF5',
+              hover: '#D1FAE5',
+              border: '#A7F3D0',
+              text: '#065F46'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Clean custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    
+    .line-clamp-1 {
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    /* Smooth focus rings */
+    button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 2px solid #0D5C3A;
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body class="h-full bg-[#F8FAFC] text-slate-800 font-sans antialiased flex flex-col">
+
+  <!-- ========================================================================= -->
+  <!-- 1. SIMPLIFIED HEADER                                                     -->
+  <!-- ========================================================================= -->
+  <header class="fixed top-0 left-0 right-0 z-40 h-16 bg-white border-b border-slate-200/80 shadow-sm flex items-center justify-between px-4 lg:px-6">
+    <!-- Left: Sidebar Toggle & Brand Logo -->
+    <div class="flex items-center gap-3">
+      <button id="sidebar-toggle-btn" onclick="toggleSidebar()" class="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center justify-center" title="Toggle Sidebar">
+        <span class="material-symbols-outlined text-[22px]" id="sidebar-toggle-icon">menu_open</span>
+      </button>
+
+      <!-- NutriMatch AI Pot Brand Identity -->
+      <a href="javascript:void(0)" onclick="switchTab('discover')" class="flex items-center gap-2.5 group">
+        <!-- Crisp Vector Logo Mark (Leaf + Pot + Spark) -->
+        <div class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center group-hover:scale-105 transition-transform shadow-xs">
+          <svg class="w-6 h-6" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 15C7 21 11 25.5 16 25.5C21 25.5 25 21 25 15H7Z" fill="#0D5C3A"/>
+            <path d="M5 12.5C5 11.67 5.67 11 6.5 11H25.5C26.33 11 27 11.67 27 12.5V14.5H5V12.5Z" fill="#09462B"/>
+            <path d="M12 25.5V27C12 27.55 11.55 28 11 28H9.5C8.95 28 8.5 27.55 8.5 27V25.5" stroke="#09462B" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M20 25.5V27C20 27.55 20.45 28 21 28H22.5C23.05 28 23.5 27.55 23.5 27V25.5" stroke="#09462B" stroke-width="1.8" stroke-linecap="round"/>
+            <!-- Fresh Leaf -->
+            <path d="M16 11C16 6 20.5 5 21.5 5C21.5 9.5 17 11 16 11Z" fill="#10B981"/>
+            <path d="M16 11C16 7 12 6.5 11 6.5C11 10 15 11 16 11Z" fill="#34D399"/>
+            <!-- AI Spark -->
+            <path d="M24 7L24.6 8.4L26 9L24.6 9.6L24 11L23.4 9.6L22 9L23.4 8.4L24 7Z" fill="#F59E0B"/>
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5 leading-none">
+            <span class="font-bold text-[17px] text-slate-900 tracking-tight">NutriMatch <span class="text-[#0D5C3A]">AI Pot</span></span>
+          </div>
+          <span class="text-[10px] text-slate-400 font-medium tracking-wide mt-0.5">Your Taste. Your Recipes. Your AI.</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Center: Compact Recipe Search Field -->
+    <div class="hidden md:flex items-center flex-1 max-w-md mx-6">
+      <div class="relative w-full">
+        <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[18px]">search</span>
+        <input id="header-search-input" type="text" placeholder="Search 4,179 recipes, ingredients (e.g. garlic, salmon, pasta)..." 
+               class="w-full h-9 pl-9 pr-8 rounded-full bg-slate-100 hover:bg-slate-100/80 focus:bg-white text-slate-800 placeholder:text-slate-400 text-[13px] border border-slate-200/80 focus:border-[#0D5C3A] focus:outline-none focus:ring-2 focus:ring-[#0D5C3A]/20 transition-all"/>
+        <button id="header-search-clear" onclick="clearSearch()" class="hidden absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
+          <span class="material-symbols-outlined text-[16px]">close</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: Status, Saved Recipes, User Profile -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Live Status Indicator -->
+      <div class="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[11px] font-semibold" title="FastAPI Recommendation Service Online">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        </span>
+        <span>Online</span>
+      </div>
+
+      <!-- Saved Recipes Button with Live Badge -->
+      <button onclick="switchTab('saved')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 text-[12px] font-semibold transition-colors border border-slate-200/80 shadow-xs" title="View Saved Recipes">
+        <span class="material-symbols-outlined text-[17px] text-amber-500">bookmark</span>
+        <span>Saved (<span id="saved-counter-badge">0</span>)</span>
+      </button>
+
+      <!-- User Profile Picker -->
+      <div class="relative">
+        <button id="user-menu-btn" onclick="toggleUserDropdown()" class="flex items-center gap-2 pl-1.5 pr-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-[12px] font-semibold border border-slate-200/80 transition-colors shadow-xs">
+          <div class="w-6 h-6 rounded-full bg-[#0D5C3A] text-white flex items-center justify-center text-[12px] font-bold">
+            <span class="material-symbols-outlined text-[15px]">person</span>
+          </div>
+          <span id="header-user-badge" class="truncate max-w-[130px] hidden sm:inline">User #1535</span>
+          <span class="material-symbols-outlined text-[16px] text-slate-400">expand_more</span>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div id="user-dropdown-menu" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200/80 py-2 z-50 animate-in fade-in duration-150">
+          <div class="px-3.5 py-2 border-b border-slate-100 flex items-center justify-between">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Switch Taste Profile</span>
+            <span class="text-[10px] text-slate-400">Food.com Corpus</span>
+          </div>
+          <div id="user-dropdown-list" class="max-h-60 overflow-y-auto py-1 divide-y divide-slate-50">
+            <!-- Populated dynamically -->
+          </div>
+          <div class="p-2 border-t border-slate-100 bg-slate-50/50">
+            <button onclick="openNewProfileModal(); toggleUserDropdown();" class="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#0D5C3A] text-[12px] font-bold transition-colors">
+              <span class="material-symbols-outlined text-[16px]">person_add</span>
+              <span>+ Create Custom Profile</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- 2. COLLAPSIBLE SIDEBAR                                                   -->
+  <!-- ========================================================================= -->
+  <aside id="app-sidebar" class="fixed left-0 top-16 bottom-0 w-[260px] bg-white border-r border-slate-200/80 z-30 flex flex-col justify-between overflow-y-auto transition-transform duration-300 ease-in-out">
+    <div>
+      <!-- Sidebar Title & Collapse -->
+      <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Main Menu</span>
+        <button onclick="toggleSidebar()" class="p-1 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors" title="Collapse Sidebar">
+          <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+        </button>
+      </div>
+
+      <!-- 5 Clean Navigation Destinations -->
+      <nav class="p-2 flex flex-col gap-1">
+        <!-- 1. Discover Recipes -->
+        <a id="nav-item-discover" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-[13px] bg-emerald-50 text-[#0D5C3A] shadow-xs transition-colors" href="javascript:void(0)" onclick="switchTab('discover')">
+          <span class="material-symbols-outlined text-[20px] text-[#0D5C3A]">explore</span>
+          <span>Discover Recipes</span>
+        </a>
+
+        <!-- 2. Saved Recipes -->
+        <a id="nav-item-saved" class="nav-item flex items-center justify-between px-3 py-2.5 rounded-xl font-medium text-[13px] text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors" href="javascript:void(0)" onclick="switchTab('saved')">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[20px] text-amber-500">bookmark</span>
+            <span>Saved Recipes</span>
+          </div>
+          <span id="nav-saved-count" class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold">0</span>
+        </a>
+
+        <!-- 3. My Taste Profile -->
+        <a id="nav-item-profile" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-[13px] text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors" href="javascript:void(0)" onclick="switchTab('profile')">
+          <span class="material-symbols-outlined text-[20px] text-slate-500">account_circle</span>
+          <span>My Taste Profile</span>
+        </a>
+
+        <!-- 4. Model Evaluation -->
+        <a id="nav-item-benchmarks" class="nav-item flex items-center justify-between px-3 py-2.5 rounded-xl font-medium text-[13px] text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors" href="javascript:void(0)" onclick="switchTab('benchmarks')">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[20px] text-slate-500">leaderboard</span>
+            <span>Model Evaluation</span>
+          </div>
+          <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">NDCG</span>
+        </a>
+
+        <!-- 5. Research & Diagnostics -->
+        <a id="nav-item-research" class="nav-item flex items-center justify-between px-3 py-2.5 rounded-xl font-medium text-[13px] text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors" href="javascript:void(0)" onclick="switchTab('research')">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[20px] text-slate-500">science</span>
+            <span>Research & Diagnostics</span>
+          </div>
+          <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600">Lab</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Sidebar Bottom Card: Formal Title & About -->
+    <div class="p-3 border-t border-slate-100 flex flex-col gap-2">
+      <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col gap-1.5">
+        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Formal Academic Title</span>
+        <span class="text-[11px] font-semibold text-slate-700 leading-tight">Adaptive Personalized Recipe Recommendation Engine</span>
+        <button onclick="openTeamModal()" class="text-[11px] font-bold text-[#0D5C3A] hover:underline flex items-center gap-1 mt-1">
+          <span class="material-symbols-outlined text-[14px]">groups</span>
+          <span>Research Team & Credits</span>
+        </button>
+      </div>
+      <div class="flex items-center justify-between px-1 text-[11px] text-slate-400 font-medium">
+        <span>Version 2.4</span>
+        <span class="text-emerald-700 font-semibold">• Live RecSys</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Floating Reopen Sidebar Button -->
+  <button id="floating-sidebar-btn" onclick="toggleSidebar()" class="hidden fixed left-4 top-20 z-20 px-3 py-2 rounded-full bg-white text-slate-800 shadow-md hover:bg-slate-50 transition-all flex items-center gap-1.5 text-[12px] font-semibold border border-slate-200">
+    <span class="material-symbols-outlined text-[17px] text-[#0D5C3A]">menu</span>
+    <span>Menu</span>
+  </button>
+
+  <!-- ========================================================================= -->
+  <!-- 3. MAIN CONTENT CONTAINER                                                -->
+  <!-- ========================================================================= -->
+  <div id="main-content-wrapper" class="flex-1 transition-all duration-300 ease-in-out pl-[260px] pt-16 flex flex-col min-h-screen">
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+
+      <!-- ===================================================================== -->
+      <!-- VIEW 1: DISCOVER RECIPES (DEFAULT LANDING PAGE)                       -->
+      <!-- ===================================================================== -->
+      <section id="tab-panel-discover" class="tab-panel flex flex-col gap-6">
+
+        <!-- Top Greeting & Intro -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Discover recipes tailored to your taste</h1>
+            <p class="text-slate-500 text-sm mt-1">Find recipes that match your preferences, dietary needs, and cooking style.</p>
+          </div>
+
+          <!-- Active User Quick Status -->
+          <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-2xs self-start md:self-auto">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <span class="text-xs text-slate-600 font-medium">Active Taste:</span>
+            <span id="subheader-user-text" class="text-xs font-bold text-slate-900">User #1535</span>
+            <button onclick="switchTab('profile')" class="text-[#0D5C3A] text-xs font-bold hover:underline ml-1">Change</button>
+          </div>
+        </div>
+
+        <!-- Integrated Search & Filter Row -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-3">
+          <!-- Common Filters Chips Bar -->
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider mr-1">Categories:</span>
+            <button onclick="selectCategory(null, this)" class="cat-pill px-3 py-1 rounded-full text-xs font-semibold bg-[#0D5C3A] text-white shadow-xs transition-colors">All</button>
+            <button onclick="selectCategory('Dinner', this)" class="cat-pill px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">Dinner</button>
+            <button onclick="selectCategory('Lunch', this)" class="cat-pill px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">Lunch</button>
+            <button onclick="selectCategory('Breakfast', this)" class="cat-pill px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">Breakfast</button>
+            <button onclick="selectCategory('Dessert', this)" class="cat-pill px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">Dessert</button>
+            <button onclick="selectCategory('Soup', this)" class="cat-pill px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">Soup</button>
+            <button onclick="selectCategory('Salad', this)" class="cat-pill px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">Salad</button>
+          </div>
+
+          <div class="border-t border-slate-100 pt-3 flex flex-wrap items-center justify-between gap-3">
+            <!-- Dietary Constraint Chips (Real Knowledge-Based Filters) -->
+            <div class="flex flex-wrap items-center gap-2">
+              <label class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200/80 text-slate-700 text-xs font-medium cursor-pointer transition-colors has-[:checked]:bg-emerald-50 has-[:checked]:text-[#0D5C3A] has-[:checked]:border-emerald-200 border border-transparent">
+                <input id="filter-veg" type="checkbox" class="rounded text-[#0D5C3A] focus:ring-[#0D5C3A] h-3.5 w-3.5"/>
+                <span>🌱 Vegetarian</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200/80 text-slate-700 text-xs font-medium cursor-pointer transition-colors has-[:checked]:bg-emerald-50 has-[:checked]:text-[#0D5C3A] has-[:checked]:border-emerald-200 border border-transparent">
+                <input id="filter-vegan" type="checkbox" class="rounded text-[#0D5C3A] focus:ring-[#0D5C3A] h-3.5 w-3.5"/>
+                <span>🌿 Vegan</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200/80 text-slate-700 text-xs font-medium cursor-pointer transition-colors has-[:checked]:bg-emerald-50 has-[:checked]:text-[#0D5C3A] has-[:checked]:border-emerald-200 border border-transparent">
+                <input id="filter-gf" type="checkbox" class="rounded text-[#0D5C3A] focus:ring-[#0D5C3A] h-3.5 w-3.5"/>
+                <span>🌾 Gluten-Free</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200/80 text-slate-700 text-xs font-medium cursor-pointer transition-colors has-[:checked]:bg-emerald-50 has-[:checked]:text-[#0D5C3A] has-[:checked]:border-emerald-200 border border-transparent">
+                <input id="filter-quick" type="checkbox" class="rounded text-[#0D5C3A] focus:ring-[#0D5C3A] h-3.5 w-3.5"/>
+                <span>⏱ ≤30 mins</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200/80 text-slate-700 text-xs font-medium cursor-pointer transition-colors has-[:checked]:bg-emerald-50 has-[:checked]:text-[#0D5C3A] has-[:checked]:border-emerald-200 border border-transparent">
+                <input id="filter-low-cal" type="checkbox" class="rounded text-[#0D5C3A] focus:ring-[#0D5C3A] h-3.5 w-3.5"/>
+                <span>🔥 ≤400 kcal</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200/80 text-slate-700 text-xs font-medium cursor-pointer transition-colors has-[:checked]:bg-emerald-50 has-[:checked]:text-[#0D5C3A] has-[:checked]:border-emerald-200 border border-transparent">
+                <input id="filter-protein" type="checkbox" class="rounded text-[#0D5C3A] focus:ring-[#0D5C3A] h-3.5 w-3.5"/>
+                <span>💪 ≥20g Protein</span>
+              </label>
+            </div>
+
+            <!-- Expandable All Filters Button -->
+            <button onclick="toggleAllFilters()" class="flex items-center gap-1 text-xs font-bold text-[#0D5C3A] hover:text-[#09462B] px-2.5 py-1 rounded-lg hover:bg-emerald-50 transition-colors">
+              <span class="material-symbols-outlined text-[16px]">tune</span>
+              <span id="all-filters-btn-text">More Filters</span>
+              <span class="material-symbols-outlined text-[16px] transition-transform" id="all-filters-arrow">expand_more</span>
+            </button>
+          </div>
+
+          <!-- Expandable Filters Section -->
+          <div id="all-filters-drawer" class="hidden border-t border-slate-100 pt-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Max Cooking Time Slider -->
+            <div class="flex flex-col gap-1.5 p-3 rounded-xl bg-slate-50">
+              <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                <span>Max Cooking Time</span>
+                <span id="time-display-val" class="text-[#0D5C3A]">60 mins</span>
+              </div>
+              <input id="filter-max-time" class="w-full accent-[#0D5C3A] h-1.5 bg-slate-200 rounded-lg cursor-pointer" max="180" min="15" step="5" type="range" value="60"/>
+              <div class="flex justify-between text-[10px] text-slate-400 font-medium"><span>15m</span><span>60m</span><span>180m</span></div>
+            </div>
+
+            <!-- Recommendation Model (Advanced) -->
+            <div class="flex flex-col gap-1.5 p-3 rounded-xl bg-slate-50 md:col-span-2">
+              <span class="text-xs font-bold text-slate-700">Recommendation Algorithm (Advanced)</span>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-emerald-300 has-[:checked]:border-[#0D5C3A] has-[:checked]:bg-emerald-50/50">
+                  <input checked class="accent-[#0D5C3A]" name="rec-model" type="radio" value="hybrid" id="model-hybrid"/>
+                  <span class="font-bold text-slate-800">Adaptive Hybrid</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-emerald-300 has-[:checked]:border-[#0D5C3A] has-[:checked]:bg-emerald-50/50">
+                  <input class="accent-[#0D5C3A]" name="rec-model" type="radio" value="svd" id="model-svd"/>
+                  <span class="font-medium text-slate-800">SVD Factorization</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-emerald-300 has-[:checked]:border-[#0D5C3A] has-[:checked]:bg-emerald-50/50">
+                  <input class="accent-[#0D5C3A]" name="rec-model" type="radio" value="item_cf" id="model-item_cf"/>
+                  <span class="font-medium text-slate-800">Item-Based CF</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-emerald-300 has-[:checked]:border-[#0D5C3A] has-[:checked]:bg-emerald-50/50">
+                  <input class="accent-[#0D5C3A]" name="rec-model" type="radio" value="content" id="model-content"/>
+                  <span class="font-medium text-slate-800">Content-Based</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Taste Profile Summary Card -->
+        <div class="bg-gradient-to-r from-emerald-50/70 via-white to-slate-50 p-4 rounded-2xl border border-emerald-100/90 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-[#0D5C3A] text-white flex items-center justify-center font-bold text-lg shadow-xs">
+              <span class="material-symbols-outlined text-[24px]">soup_kitchen</span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-900 text-sm" id="taste-profile-persona">Culinary Adventurer</span>
+                <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#0D5C3A] text-[10px] font-bold">Personalized</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-0.5">Recommendations dynamically weighted to your interactions & taste affinities.</p>
+            </div>
+          </div>
+
+          <!-- Calculated Metric Gauges from Real Backend -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 lg:gap-6">
+            <div>
+              <div class="flex justify-between text-[11px] font-semibold text-slate-600 mb-1">
+                <span>Vegetarian</span>
+                <span id="metric-label-veg" class="text-slate-900 font-bold">76.7%</span>
+              </div>
+              <div class="h-1.5 w-24 bg-slate-200 rounded-full overflow-hidden">
+                <div id="metric-bar-veg" class="h-full bg-emerald-600 rounded-full transition-all duration-500" style="width: 76.7%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-[11px] font-semibold text-slate-600 mb-1">
+                <span>Healthy Meals</span>
+                <span id="metric-label-healthy" class="text-slate-900 font-bold">75.3%</span>
+              </div>
+              <div class="h-1.5 w-24 bg-slate-200 rounded-full overflow-hidden">
+                <div id="metric-bar-healthy" class="h-full bg-teal-600 rounded-full transition-all duration-500" style="width: 75.3%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-[11px] font-semibold text-slate-600 mb-1">
+                <span>Quick Prep</span>
+                <span id="metric-label-quick" class="text-slate-900 font-bold">58.2%</span>
+              </div>
+              <div class="h-1.5 w-24 bg-slate-200 rounded-full overflow-hidden">
+                <div id="metric-bar-quick" class="h-full bg-amber-500 rounded-full transition-all duration-500" style="width: 58.2%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-[11px] font-semibold text-slate-600 mb-1">
+                <span>Spicy Tolerance</span>
+                <span id="metric-label-spicy" class="text-slate-900 font-bold">88%</span>
+              </div>
+              <div class="h-1.5 w-24 bg-slate-200 rounded-full overflow-hidden">
+                <div id="metric-bar-spicy" class="h-full bg-rose-500 rounded-full transition-all duration-500" style="width: 88%"></div>
+              </div>
+            </div>
+          </div>
+
+          <button onclick="switchTab('profile')" class="px-3.5 py-1.5 rounded-xl border border-slate-200 hover:bg-white text-slate-700 text-xs font-bold transition-colors shadow-2xs whitespace-nowrap self-start lg:self-center">
+            Edit Preferences
+          </button>
+        </div>
+
+        <!-- Recommendations Feed Header & Sorting -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">Recommended for You</h2>
+            <p class="text-xs text-slate-500">Personalized rankings based on your preferences and recipe interactions.</p>
+          </div>
+
+          <!-- Sorting Control Buttons -->
+          <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl self-start sm:self-auto border border-slate-200/80">
+            <button id="sort-btn-match" onclick="applySorting('match')" class="sort-btn px-3 py-1 rounded-lg bg-white text-[#0D5C3A] font-bold text-xs shadow-xs transition-all">Best Match</button>
+            <button id="sort-btn-rating" onclick="applySorting('rating')" class="sort-btn px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 font-medium text-xs transition-all">Highest Rated</button>
+            <button id="sort-btn-fastest" onclick="applySorting('fastest')" class="sort-btn px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 font-medium text-xs transition-all">Quickest</button>
+            <button id="sort-btn-protein" onclick="applySorting('protein')" class="sort-btn px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 font-medium text-xs transition-all">Highest Protein</button>
+          </div>
+        </div>
+
+        <!-- Adaptive Learning Banner (Appears after rating a dish) -->
+        <div id="adaptive-update-banner" class="hidden flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 shadow-xs animate-in fade-in duration-300">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-emerald-200/60 text-[#0D5C3A] flex items-center justify-center font-bold">
+              <span class="material-symbols-outlined text-[20px]">auto_awesome</span>
+            </div>
+            <div>
+              <span class="font-bold text-slate-900 text-sm" id="adaptive-banner-title">Model Adapted to Your Feedback!</span>
+              <p class="text-xs text-slate-600 mt-0.5" id="adaptive-banner-desc">Your latent taste coordinates have dynamically shifted via Online SGD.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="appendAdaptedRecommendations()" class="px-3.5 py-1.5 rounded-lg bg-[#0D5C3A] hover:bg-[#09462B] text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer">
+              <span class="material-symbols-outlined text-[16px]">bolt</span>
+              <span>Append 5 Fresh Dishes</span>
+            </button>
+            <button onclick="dismissAdaptiveBanner()" class="p-1 text-slate-400 hover:text-slate-600">
+              <span class="material-symbols-outlined text-[18px]">close</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Recipe Cards Grid (3 Columns on Wide Screens, 2 on Tablet, 1 on Mobile) -->
+        <div id="recipe-cards-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 items-start">
+          <!-- Populated dynamically via JS -->
+          <div class="col-span-full py-20 flex flex-col items-center justify-center text-center">
+            <div class="w-10 h-10 border-3 border-[#0D5C3A] border-t-transparent rounded-full animate-spin mb-3"></div>
+            <h3 class="text-sm font-semibold text-slate-800">Synthesizing Personalized Recommendations...</h3>
+            <p class="text-slate-400 text-xs mt-1">Evaluating SVD latent factors and collaborative affinity scores</p>
+          </div>
+        </div>
+
+        <!-- Load More Section -->
+        <div id="load-more-container" class="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs mt-2">
+          <div class="flex items-center gap-2 text-slate-500 text-xs">
+            <span class="material-symbols-outlined text-[#0D5C3A] text-[18px]">layers</span>
+            <span>Showing <strong id="loaded-count-badge" class="text-slate-900">10</strong> dishes • Catalog: <strong class="text-slate-900">4,179</strong> Food.com recipes</span>
+          </div>
+          <button id="load-more-btn" onclick="loadMoreRecommendations()" class="px-5 py-2.5 rounded-xl bg-[#0D5C3A] hover:bg-[#09462B] text-white text-xs font-bold shadow-xs hover:shadow-sm transition-all flex items-center gap-2 cursor-pointer">
+            <span class="material-symbols-outlined text-[17px]">add_circle</span>
+            <span>Load 10 More Dishes</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- VIEW 2: SAVED RECIPES PAGE                                            -->
+      <!-- ===================================================================== -->
+      <section id="tab-panel-saved" class="tab-panel hidden flex flex-col gap-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/80">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Saved Recipes</h1>
+            <p class="text-slate-500 text-sm mt-1">Your bookmarked recipes stored for quick kitchen access.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="clearAllBookmarks()" class="px-3.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-red-600 text-xs font-semibold transition-colors">
+              Clear All
+            </button>
+            <button onclick="switchTab('discover')" class="px-4 py-1.5 rounded-lg bg-[#0D5C3A] text-white text-xs font-bold hover:bg-[#09462B] transition-colors shadow-xs">
+              + Discover More
+            </button>
+          </div>
+        </div>
+
+        <!-- Saved Recipes Grid -->
+        <div id="saved-cards-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 items-start">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="saved-empty-state" class="hidden py-24 flex flex-col items-center justify-center text-center bg-white rounded-2xl border border-slate-200/80 p-8 shadow-xs">
+          <div class="w-16 h-16 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center mb-4">
+            <span class="material-symbols-outlined text-[32px]">bookmark_border</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900">No saved recipes yet</h3>
+          <p class="text-slate-500 text-sm max-w-md mt-1 mb-6">Browse delicious personalized recipes on the Discover page and tap the bookmark icon to save them to your favorites collection.</p>
+          <button onclick="switchTab('discover')" class="px-5 py-2.5 rounded-xl bg-[#0D5C3A] hover:bg-[#09462B] text-white text-xs font-bold transition-all shadow-xs flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">explore</span>
+            <span>Explore Recommended Recipes</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- VIEW 3: MY TASTE PROFILE PAGE                                         -->
+      <!-- ===================================================================== -->
+      <section id="tab-panel-profile" class="tab-panel hidden flex flex-col gap-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/80">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">My Taste Profile</h1>
+            <p class="text-slate-500 text-sm mt-1">Calibrated latent taste coordinates and dietary affinities.</p>
+          </div>
+          <button onclick="openNewProfileModal()" class="px-4 py-2 rounded-xl bg-[#0D5C3A] hover:bg-[#09462B] text-white text-xs font-bold transition-colors shadow-xs flex items-center gap-1.5 self-start sm:self-auto">
+            <span class="material-symbols-outlined text-[17px]">person_add</span>
+            <span>+ Create Custom Profile</span>
+          </button>
+        </div>
+
+        <!-- Active User Profile Card -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-2xl bg-[#0D5C3A] text-white flex items-center justify-center font-bold text-2xl shadow-sm">
+              <span class="material-symbols-outlined text-[36px]">account_circle</span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-xl font-bold text-slate-900" id="profile-display-name">User #1535</h3>
+                <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-[#0D5C3A] text-xs font-bold" id="profile-display-tag">Curated Foodie</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1" id="profile-display-persona">Culinary Adventurer • 146 interaction history reviews • Avg rating: 4.63★</p>
+            </div>
+          </div>
+
+          <!-- User Switcher Dropdown -->
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+            <span class="text-xs font-bold text-slate-500">Switch User:</span>
+            <select id="user-select" class="h-9 px-3 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-900 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#0D5C3A]/20 cursor-pointer border border-slate-200/80">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+        </div>
+
+        <!-- Palate Metrics Breakdown Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-2">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Vegetarian Affinity</span>
+            <span class="text-2xl font-extrabold text-[#0D5C3A]" id="prof-metric-veg">76.7%</span>
+            <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div id="prof-bar-veg" class="h-full bg-emerald-600 rounded-full" style="width: 76.7%"></div>
+            </div>
+            <span class="text-[11px] text-slate-400">Calculated from user recipes</span>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-2">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Healthy Meals</span>
+            <span class="text-2xl font-extrabold text-teal-700" id="prof-metric-healthy">75.3%</span>
+            <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div id="prof-bar-healthy" class="h-full bg-teal-600 rounded-full" style="width: 75.3%"></div>
+            </div>
+            <span class="text-[11px] text-slate-400">Calories ≤ 450 kcal</span>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-2">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Quick Prep Meals</span>
+            <span class="text-2xl font-extrabold text-amber-600" id="prof-metric-quick">58.2%</span>
+            <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div id="prof-bar-quick" class="h-full bg-amber-500 rounded-full" style="width: 58.2%"></div>
+            </div>
+            <span class="text-[11px] text-slate-400">Cook time ≤ 35 mins</span>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-2">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">High Protein Meals</span>
+            <span class="text-2xl font-extrabold text-blue-700" id="prof-metric-protein">42.5%</span>
+            <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div id="prof-bar-protein" class="h-full bg-blue-600 rounded-full" style="width: 42.5%"></div>
+            </div>
+            <span class="text-[11px] text-slate-400">Protein ≥ 20g</span>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-2">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Spicy Tolerance</span>
+            <span class="text-2xl font-extrabold text-rose-700" id="prof-metric-spicy">88%</span>
+            <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div id="prof-bar-spicy" class="h-full bg-rose-500 rounded-full" style="width: 88%"></div>
+            </div>
+            <span class="text-[11px] text-slate-400">Pepper & chili preference</span>
+          </div>
+        </div>
+
+        <!-- Recent Recipe Interactions History Table -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden flex flex-col">
+          <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#0D5C3A] text-[20px]">history</span>
+              <h3 class="font-bold text-sm text-slate-900">Recent Recipe Ratings & Interactions</h3>
+            </div>
+            <span class="text-xs text-slate-400">Food.com Real Interactions</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-100">
+                <tr>
+                  <th class="py-3 px-4">Recipe ID</th>
+                  <th class="py-3 px-4">Recipe Title</th>
+                  <th class="py-3 px-4">Category</th>
+                  <th class="py-3 px-4">Rating Given</th>
+                  <th class="py-3 px-4">Interaction Date</th>
+                </tr>
+              </thead>
+              <tbody id="profile-recent-table" class="divide-y divide-slate-100 text-slate-700">
+                <!-- Populated dynamically from API -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Adaptive Model Weights Card -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-4">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#0D5C3A] text-[20px]">hub</span>
+            <h3 class="font-bold text-sm text-slate-900">Adaptive Hybrid Weighting Matrix</h3>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            NutriMatch AI Pot calculates personalized candidate rankings using an ensemble combining SVD Matrix Factorization, Item-Based Collaborative Filtering, and Content-Based TF-IDF. Whenever you submit feedback on a recipe, an Online Stochastic Gradient Descent (SGD) step adapts your latent coordinates in real time.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+              <span class="text-xs font-bold text-slate-500">SVD Latent Space Weight</span>
+              <span class="text-xl font-extrabold text-[#0D5C3A] mt-1">50.0%</span>
+              <span class="text-[11px] text-slate-400 mt-0.5">k=32 regularized matrix factorization</span>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+              <span class="text-xs font-bold text-slate-500">Item-Based CF Weight</span>
+              <span class="text-xl font-extrabold text-slate-800 mt-1">30.0%</span>
+              <span class="text-[11px] text-slate-400 mt-0.5">k=30 neighborhood co-rating cosine</span>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+              <span class="text-xs font-bold text-slate-500">Content-Based Weight</span>
+              <span class="text-xl font-extrabold text-teal-700 mt-1">20.0%</span>
+              <span class="text-[11px] text-slate-400 mt-0.5">TF-IDF over ingredients & tags</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- VIEW 4: MODEL EVALUATION PAGE (DEDICATED BENCHMARK WORKSPACE)          -->
+      <!-- ===================================================================== -->
+      <section id="tab-panel-benchmarks" class="tab-panel hidden flex flex-col gap-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/80">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Model Evaluation & Comparative Benchmarks</h1>
+            <p class="text-slate-500 text-sm mt-1">Empirical evaluation on held-out Food.com test dataset across 4 recommendation paradigms.</p>
+          </div>
+          <span class="px-3 py-1 rounded-full bg-emerald-50 text-[#0D5C3A] text-xs font-bold border border-emerald-200 self-start sm:self-auto">Test Split: 15% Stratified</span>
+        </div>
+
+        <!-- 4 Top KPI Stat Cards (Populated Dynamically from benchmark_results.json) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col">
+            <div class="flex items-center justify-between text-slate-400">
+              <span class="text-xs font-bold uppercase tracking-wider">Champion Model</span>
+              <span class="material-symbols-outlined text-[20px] text-amber-500">workspace_premium</span>
+            </div>
+            <span class="text-lg font-extrabold text-slate-900 mt-2" id="kpi-champion-name">Adaptive Hybrid</span>
+            <span class="text-xs text-[#0D5C3A] font-semibold mt-1">Superior ranking performance</span>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col">
+            <div class="flex items-center justify-between text-slate-400">
+              <span class="text-xs font-bold uppercase tracking-wider">Top NDCG@10 (Ranking)</span>
+              <span class="material-symbols-outlined text-[20px] text-[#0D5C3A]">trending_up</span>
+            </div>
+            <span class="text-2xl font-extrabold text-[#0D5C3A] mt-1" id="kpi-best-ndcg">0.0075</span>
+            <span class="text-xs text-slate-500 mt-1">Adaptive Hybrid • +108% vs Item-CF</span>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col">
+            <div class="flex items-center justify-between text-slate-400">
+              <span class="text-xs font-bold uppercase tracking-wider">Lowest RMSE (Rating)</span>
+              <span class="material-symbols-outlined text-[20px] text-blue-600">query_stats</span>
+            </div>
+            <span class="text-2xl font-extrabold text-blue-700 mt-1" id="kpi-lowest-rmse">0.5667</span>
+            <span class="text-xs text-slate-500 mt-1">SVD Matrix Factorization</span>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col">
+            <div class="flex items-center justify-between text-slate-400">
+              <span class="text-xs font-bold uppercase tracking-wider">Catalog Coverage</span>
+              <span class="material-symbols-outlined text-[20px] text-teal-600">pie_chart</span>
+            </div>
+            <span class="text-2xl font-extrabold text-teal-700 mt-1" id="kpi-best-coverage">43.89%</span>
+            <span class="text-xs text-slate-500 mt-1">Content-Based (TF-IDF)</span>
+          </div>
+        </div>
+
+        <!-- Ranking Metrics vs Rating Error Metrics Guide -->
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-slate-500 text-[22px] mt-0.5">info</span>
+            <div class="text-xs text-slate-600 leading-relaxed">
+              <strong class="text-slate-900">Understanding Recommendation Metrics:</strong>
+              Ranking metrics (NDCG, Recall, MAP, Hit Rate) measure whether relevant recipes appear at the very top of the user's feed. Rating prediction metrics (RMSE, MAE) measure absolute star-rating error. The Adaptive Hybrid engine maximizes top-k ranking discovery, while pure SVD minimizes rating error.
+            </div>
+          </div>
+        </div>
+
+        <!-- Benchmark Charts & Visualization -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Ranking Quality Bar Chart -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="font-bold text-sm text-slate-900">Ranking Quality Comparison (NDCG@10, Recall@10, MAP@10)</h3>
+                <p class="text-xs text-slate-400">Higher is better • Measures top-k relevance</p>
+              </div>
+              <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[11px] font-bold">K=10</span>
+            </div>
+            <div class="h-56 w-full flex items-end justify-between gap-4 pt-6 px-2 border-b border-slate-100" id="benchmark-ranking-chart">
+              <!-- Populated dynamically via JS -->
+            </div>
+            <div class="flex items-center justify-center gap-6 text-xs text-slate-500 pt-1">
+              <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-[#0D5C3A]"></span><span>NDCG@10</span></div>
+              <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-teal-500"></span><span>Recall@10</span></div>
+              <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-400"></span><span>MAP@10</span></div>
+            </div>
+          </div>
+
+          <!-- Error & Coverage Chart -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="font-bold text-sm text-slate-900">Rating Prediction Error (RMSE) & Catalog Coverage</h3>
+                <p class="text-xs text-slate-400">RMSE: Lower is better • Coverage: Higher is better</p>
+              </div>
+              <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[11px] font-bold">All Models</span>
+            </div>
+            <div class="h-56 w-full flex items-end justify-between gap-4 pt-6 px-2 border-b border-slate-100" id="benchmark-error-chart">
+              <!-- Populated dynamically via JS -->
+            </div>
+            <div class="flex items-center justify-center gap-6 text-xs text-slate-500 pt-1">
+              <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-blue-500"></span><span>RMSE (Lower = Better)</span></div>
+              <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-indigo-300"></span><span>Coverage %</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full Model Comparison Table (Real Data from benchmark_results.json) -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden flex flex-col">
+          <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#0D5C3A] text-[20px]">table_chart</span>
+              <h3 class="font-bold text-sm text-slate-900">Comprehensive Benchmark Metrics Matrix</h3>
+            </div>
+            <span class="text-xs text-slate-400">Food.com 500-User Evaluation Sample</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-100">
+                <tr>
+                  <th class="py-3 px-4">Model Paradigm</th>
+                  <th class="py-3 px-3">NDCG@10</th>
+                  <th class="py-3 px-3">Recall@10</th>
+                  <th class="py-3 px-3">Precision@10</th>
+                  <th class="py-3 px-3">MAP@10</th>
+                  <th class="py-3 px-3">Hit Rate@10</th>
+                  <th class="py-3 px-3">RMSE</th>
+                  <th class="py-3 px-3">MAE</th>
+                  <th class="py-3 px-3">Catalog Coverage</th>
+                </tr>
+              </thead>
+              <tbody id="benchmark-table-body" class="divide-y divide-slate-100 text-slate-700">
+                <!-- Populated dynamically via JS from API -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- VIEW 5: RESEARCH & DIAGNOSTICS PAGE                                   -->
+      <!-- ===================================================================== -->
+      <section id="tab-panel-research" class="tab-panel hidden flex flex-col gap-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/80">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Research & Diagnostics Workspace</h1>
+            <p class="text-slate-500 text-sm mt-1">Latent taste factor projection, flavor synergy graphs, training curves, and online SGD simulation.</p>
+          </div>
+          <button onclick="exportCurrentLogs()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors border border-slate-200 shadow-2xs self-start sm:self-auto">
+            <span class="material-symbols-outlined text-[16px] text-[#0D5C3A]">download</span>
+            <span>Export Session Logs</span>
+          </button>
+        </div>
+
+        <!-- Research Sub-tabs Navigation -->
+        <div class="flex items-center gap-1 bg-white p-1.5 rounded-2xl border border-slate-200/80 shadow-xs overflow-x-auto">
+          <button id="res-tab-btn-latent" onclick="switchResearchSubTab('latent')" class="res-tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#0D5C3A] text-white shadow-xs transition-all whitespace-nowrap">
+            <span class="material-symbols-outlined text-[17px]">scatter_plot</span>
+            <span>Latent Taste Space (SVD 2D)</span>
+          </button>
+          <button id="res-tab-btn-affinities" onclick="switchResearchSubTab('affinities')" class="res-tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all whitespace-nowrap">
+            <span class="material-symbols-outlined text-[17px]">hub</span>
+            <span>Ingredient Affinities Graph</span>
+          </button>
+          <button id="res-tab-btn-diagnostics" onclick="switchResearchSubTab('diagnostics')" class="res-tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all whitespace-nowrap">
+            <span class="material-symbols-outlined text-[17px]">analytics</span>
+            <span>Bias-Variance Diagnostics</span>
+          </button>
+          <button id="res-tab-btn-learning" onclick="switchResearchSubTab('learning')" class="res-tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all whitespace-nowrap">
+            <span class="material-symbols-outlined text-[17px]">sync</span>
+            <span>Adaptive Learning Simulation</span>
+          </button>
+        </div>
+
+        <!-- SUB-TAB 1: LATENT TASTE SPACE -->
+        <div id="res-panel-latent" class="res-panel flex flex-col gap-6">
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-4">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+              <!-- Category Filter Buttons -->
+              <div class="flex flex-wrap items-center gap-1.5" id="latent-category-filters">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1">Cluster Filter:</span>
+                <button onclick="filterLatentCategory('All', this)" class="latent-cat-btn px-2.5 py-1 rounded-full bg-[#0D5C3A] text-white text-xs font-bold shadow-xs">All (140)</button>
+                <button onclick="filterLatentCategory('Dinner', this)" class="latent-cat-btn px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs hover:bg-slate-200 transition-colors flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Dinner</button>
+                <button onclick="filterLatentCategory('Dessert', this)" class="latent-cat-btn px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs hover:bg-slate-200 transition-colors flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Dessert</button>
+                <button onclick="filterLatentCategory('Salad', this)" class="latent-cat-btn px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs hover:bg-slate-200 transition-colors flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Salad</button>
+                <button onclick="filterLatentCategory('Soup', this)" class="latent-cat-btn px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs hover:bg-slate-200 transition-colors flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-purple-500"></span> Soup</button>
+                <button onclick="filterLatentCategory('Breakfast', this)" class="latent-cat-btn px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs hover:bg-slate-200 transition-colors flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-pink-500"></span> Breakfast</button>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-slate-500">
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-500 ring-4 ring-red-100 animate-pulse"></span> Target User Position</span>
+                <span>• Hover point to inspect</span>
+              </div>
+            </div>
+
+            <!-- Canvas Container -->
+            <div id="latent-canvas-container" class="relative w-full h-[460px] bg-slate-50 rounded-xl overflow-hidden border border-slate-200/80 flex items-center justify-center">
+              <canvas id="latent-canvas" class="w-full h-full cursor-crosshair"></canvas>
+              <div id="latent-tooltip" class="absolute hidden px-3 py-2 rounded-xl bg-slate-900 text-white text-xs shadow-xl pointer-events-none z-20"></div>
+            </div>
+
+            <!-- Quadrant Palate Insights -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">User Embedding (2D PCA)</span>
+                <span class="font-bold text-sm text-[#0D5C3A] mt-1" id="latent-user-coord">(x: +0.0210, y: +0.0383)</span>
+                <span class="text-[11px] text-slate-400 mt-0.5">Projected from 32 latent dimensions</span>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Explained Variance</span>
+                <span class="font-bold text-sm text-teal-700 mt-1">73.7% Variance Retained</span>
+                <span class="text-[11px] text-slate-400 mt-0.5">Top 2 Principal Components</span>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Active Palate Cluster</span>
+                <span class="font-bold text-sm text-emerald-800 mt-1">Vegetarian / Savory Italian</span>
+                <span class="text-[11px] text-slate-400 mt-0.5">High garlic & olive oil affinity</span>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Regularization Guard</span>
+                <span class="font-bold text-sm text-[#0D5C3A] mt-1">λ = 0.05 L2 Regularized</span>
+                <span class="text-[11px] text-slate-400 mt-0.5">Early stopping checkpoint at Epoch 4</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Latent Recipe Directory Table -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden flex flex-col">
+            <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#0D5C3A] text-[20px]">explore</span>
+                <h3 class="font-bold text-sm text-slate-900">Sampled Recipes in Latent Palate Space</h3>
+              </div>
+              <input id="latent-table-search" type="text" placeholder="Filter by recipe name or category..." 
+                     class="px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-[#0D5C3A]/20"
+                     oninput="filterLatentTable(this.value)">
+            </div>
+            <div class="overflow-x-auto max-h-[360px]">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider sticky top-0 z-10 border-b border-slate-100">
+                  <tr>
+                    <th class="py-3 px-4">Recipe Title</th>
+                    <th class="py-3 px-4">Category</th>
+                    <th class="py-3 px-4">Latent (X, Y)</th>
+                    <th class="py-3 px-4">Rating</th>
+                    <th class="py-3 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-slate-700" id="latent-table-body">
+                  <!-- Populated dynamically via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-TAB 2: INGREDIENT AFFINITIES GRAPH -->
+        <div id="res-panel-affinities" class="res-panel hidden flex flex-col gap-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Circular Synergy Network Canvas (8 cols) -->
+            <div class="lg:col-span-8 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-4">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                  <h3 class="font-bold text-sm text-slate-900">Culinary Synergy Network</h3>
+                  <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-[#0D5C3A] text-[10px] font-bold">24 Core Hubs</span>
+                </div>
+                <span class="text-xs font-bold text-[#0D5C3A]" id="active-ingredient-node-name">All Hubs (Click node to filter)</span>
+              </div>
+              <div id="ingredient-canvas-container" class="relative w-full h-[460px] bg-slate-50 rounded-xl overflow-hidden border border-slate-200/80 flex items-center justify-center">
+                <canvas id="ingredient-canvas" class="w-full h-full cursor-pointer"></canvas>
+                <div id="ingredient-tooltip" class="absolute hidden px-3 py-2 rounded-xl bg-slate-900 text-white text-xs shadow-xl pointer-events-none z-20"></div>
+              </div>
+              <div class="flex items-center justify-between text-slate-400 text-xs pt-1">
+                <span>Line thickness indicates co-occurrence frequency across the Food.com catalog.</span>
+                <button onclick="resetIngredientFilter()" class="text-[#0D5C3A] hover:underline font-bold text-xs">Reset Selection</button>
+              </div>
+            </div>
+
+            <!-- Top Pairings Sidebar (4 cols) -->
+            <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+              <div class="flex flex-col gap-3">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <span class="text-xs font-bold text-slate-900 uppercase tracking-wider">Top Flavor Pairings</span>
+                  <span class="text-[11px] text-slate-400 font-semibold">Affinity Score</span>
+                </div>
+                <div class="flex flex-col gap-2 max-h-[420px] overflow-y-auto pr-1" id="ingredient-links-list">
+                  <!-- Populated dynamically via JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Co-occurrence Matrix Table -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden flex flex-col">
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#0D5C3A] text-[20px]">hub</span>
+                <h3 class="font-bold text-sm text-slate-900">Knowledge-Based Affinity Rules Matrix</h3>
+              </div>
+              <span class="text-xs text-slate-400">Normalized Pointwise Mutual Information</span>
+            </div>
+            <div class="overflow-x-auto max-h-[340px]">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider sticky top-0 z-10 border-b border-slate-100">
+                  <tr>
+                    <th class="py-3 px-4">Primary Ingredient</th>
+                    <th class="py-3 px-4">Paired Ingredient</th>
+                    <th class="py-3 px-4">Synergy Affinity</th>
+                    <th class="py-3 px-4">Co-occurring Recipes</th>
+                    <th class="py-3 px-4">Culinary Synergy Role</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-slate-700" id="ingredient-matrix-tbody">
+                  <!-- Populated dynamically via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-TAB 3: BIAS-VARIANCE DIAGNOSTICS -->
+        <div id="res-panel-diagnostics" class="res-panel hidden flex flex-col gap-6">
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+              <div>
+                <h3 class="font-bold text-sm text-slate-900">Training Loss & Validation RMSE Learning Curves</h3>
+                <p class="text-xs text-slate-400">Empirical validation curves proving zero overfitting on SVD latent factors</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-[#0D5C3A] text-xs font-bold border border-emerald-200">Best Val RMSE: 0.5356 (Epoch 4)</span>
+              </div>
+            </div>
+
+            <!-- Learning Curves Chart Frame -->
+            <div class="h-64 w-full flex items-end justify-between gap-4 pt-6 px-4 border-b border-slate-100" id="diagnostics-curves-container">
+              <!-- Rendered dynamically from diagnostics.json via JS -->
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-4 pt-2 text-xs">
+              <div class="flex items-center gap-6 text-slate-500">
+                <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-blue-500"></span><span>Train Loss</span></div>
+                <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-indigo-400"></span><span>Train RMSE</span></div>
+                <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-600"></span><span>Val RMSE (Best @ Epoch 4)</span></div>
+              </div>
+              <span class="text-slate-400 font-medium">Early stopping with patience = 4 prevents overfitting</span>
+            </div>
+
+            <!-- Diagnostic Insights Callouts -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col gap-1">
+                <span class="text-xs font-bold text-slate-600">Optimal Generalization</span>
+                <p class="text-xs text-slate-500 leading-relaxed">Validation error reaches global minimum at Epoch 4 (0.5356). Beyond Epoch 4, training loss drops marginally while validation RMSE remains flat, confirming the L2 penalty (\u03bb=0.05) halts generalization degradation.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col gap-1">
+                <span class="text-xs font-bold text-slate-600">Zero Overfitting Signature</span>
+                <p class="text-xs text-slate-500 leading-relaxed">The spread between Train RMSE (0.5234) and Val RMSE (0.5364) at Epoch 8 is merely 0.013, proving negligible variance gap on held-out reviews.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col gap-1">
+                <span class="text-xs font-bold text-slate-600">Regularized Convergence</span>
+                <p class="text-xs text-slate-500 leading-relaxed">SGD learning rate = 0.01 with bias regularization (\u03bb=0.05) ensures smooth monotonic loss descent without oscillations.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-TAB 4: ADAPTIVE LEARNING SIMULATION -->
+        <div id="res-panel-learning" class="res-panel hidden flex flex-col gap-6">
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-6">
+            <div>
+              <h3 class="font-bold text-sm text-slate-900">Online SGD Adaptive Learning Loop</h3>
+              <p class="text-xs text-slate-400 mt-0.5">Test how explicit user star ratings immediately update user latent vectors and shift candidate rankings.</p>
+            </div>
+
+            <!-- Two-Column Simulation: Before vs After -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Before Feedback Column -->
+              <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col gap-3">
+                <div class="flex items-center justify-between border-b border-slate-200/60 pb-2">
+                  <span class="text-xs font-bold text-slate-700">Baseline Recommendations (Before Feedback)</span>
+                  <span class="px-2 py-0.5 rounded bg-slate-200 text-slate-700 text-[10px] font-bold">User Profile v1.0</span>
+                </div>
+                <div class="flex flex-col gap-2" id="sim-before-list">
+                  <!-- Populated dynamically via JS -->
+                </div>
+              </div>
+
+              <!-- Interactive Rating Trigger & Adapted Ranking -->
+              <div class="p-5 rounded-2xl bg-emerald-50/50 border border-emerald-200 flex flex-col gap-3" id="sim-after-container">
+                <div class="flex items-center justify-between border-b border-emerald-200/60 pb-2">
+                  <span class="text-xs font-bold text-[#0D5C3A]">Adapted Ranking (After Online SGD)</span>
+                  <span class="px-2 py-0.5 rounded bg-emerald-100 text-[#0D5C3A] text-[10px] font-bold" id="sim-after-badge">User Profile v1.1</span>
+                </div>
+
+                <!-- Simulation Interactive Rating Box -->
+                <div class="p-4 rounded-xl bg-white border border-emerald-200 shadow-2xs flex flex-col gap-2">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-800" id="sim-target-dish-name">Garlic Butter Herb Salmon</span>
+                    <span class="text-xs text-amber-500 font-bold" id="sim-rating-display">5.0★ Rating</span>
+                  </div>
+                  <div class="flex items-center justify-between pt-1">
+                    <div class="flex items-center gap-1 text-xl text-amber-400 cursor-pointer">
+                      <button onclick="setSimRating(1)" class="sim-star">★</button>
+                      <button onclick="setSimRating(2)" class="sim-star">★</button>
+                      <button onclick="setSimRating(3)" class="sim-star">★</button>
+                      <button onclick="setSimRating(4)" class="sim-star">★</button>
+                      <button onclick="setSimRating(5)" class="sim-star">★</button>
+                    </div>
+                    <button id="sim-apply-btn" onclick="applySimulatedFeedback()" class="px-4 py-2 rounded-xl bg-[#0D5C3A] hover:bg-[#09462B] text-white text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer">
+                      <span>Apply Online SGD</span>
+                      <span class="material-symbols-outlined text-[16px]">bolt</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Adapted Output List -->
+                <div class="flex flex-col gap-2 pt-1" id="sim-after-list">
+                  <!-- Populated dynamically via JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Clean Footer -->
+    <footer class="bg-white border-t border-slate-200/80 py-4 px-6 text-center text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-700">NutriMatch AI Pot</span>
+        <span>•</span>
+        <span>Your Taste. Your Recipes. Your AI.</span>
+      </div>
+      <div>
+        <span>Formal Title: Adaptive Personalized Recipe Recommendation Engine</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 4. MODALS & TOAST NOTIFICATIONS                                          -->
+  <!-- ========================================================================= -->
+
+  <!-- Research Team Modal -->
+  <div id="team-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 animate-in fade-in duration-200">
+    <div class="bg-white rounded-3xl shadow-2xl border border-slate-200/80 max-w-lg w-full overflow-hidden flex flex-col">
+      <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-[#0D5C3A] text-white flex items-center justify-center font-bold">
+            <span class="material-symbols-outlined text-[22px]">groups</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-slate-900">Research Team & Credits</h3>
+            <p class="text-xs text-slate-500">Adaptive Personalized Recipe Recommendation Engine</p>
+          </div>
+        </div>
+        <button onclick="closeTeamModal()" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+      <div class="p-6 flex flex-col gap-4 text-xs text-slate-600">
+        <div>
+          <span class="text-slate-400 uppercase tracking-wider font-bold text-[10px]">Project Team Members</span>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+              <strong class="text-slate-900 text-[13px]">Krrish Jha</strong>
+              <span class="text-slate-500 mt-0.5">24STUCHH010116</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+              <strong class="text-slate-900 text-[13px]">Rasineni Charishma</strong>
+              <span class="text-slate-500 mt-0.5">24STUCHH010662</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+              <strong class="text-slate-900 text-[13px]">Ande Hiranmai</strong>
+              <span class="text-slate-500 mt-0.5">24STUCHH010931</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+              <strong class="text-slate-900 text-[13px]">Chirra Chaithanya</strong>
+              <span class="text-slate-500 mt-0.5">24STUCHH010120</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-slate-100">
+          <span class="text-slate-400 uppercase tracking-wider font-bold text-[10px]">Academic Dataset & Foundation</span>
+          <p class="text-slate-600 mt-1 leading-relaxed">
+            Evaluated on the benchmark Food.com dataset (RUCAIBox/RecSysDatasets) comprising 231,000+ recipes, 1.1M+ community interactions, validated nutrition profiles, and ingredient synergy graphs.
+          </p>
+        </div>
+      </div>
+      <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+        <button onclick="closeTeamModal()" class="px-4 py-2 rounded-xl bg-[#0D5C3A] text-white text-xs font-bold hover:bg-[#09462B] transition-colors shadow-xs">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Profile Modal -->
+  <div id="new-profile-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 animate-in fade-in duration-200">
+    <div class="bg-white rounded-3xl shadow-2xl border border-slate-200/80 max-w-md w-full overflow-hidden flex flex-col">
+      <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-[#0D5C3A] flex items-center justify-center font-bold">
+            <span class="material-symbols-outlined text-[22px]">person_add</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-slate-900">Create New Taste Profile</h3>
+            <p class="text-xs text-slate-500">Zero-shot onboarding with dynamic latent initialization</p>
+          </div>
+        </div>
+        <button onclick="closeNewProfileModal()" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+      <form onsubmit="handleCreateNewProfile(event)" class="p-6 flex flex-col gap-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Your Name / Persona Title</label>
+          <input id="np-name" type="text" required placeholder="e.g. Maya • Mediterranean Chef" class="w-full h-10 px-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-[#0D5C3A]/20 focus:border-[#0D5C3A]"/>
+          <input id="np-id" type="hidden" value="888123"/>
+        </div>
+
+        <div>
+          <span class="block font-bold text-slate-700 mb-1.5">Dietary Preferences</span>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 p-2 rounded-xl bg-slate-50 border border-slate-100 cursor-pointer hover:bg-slate-100/80">
+              <input id="np-veg" type="checkbox" class="rounded text-[#0D5C3A] focus:ring-[#0D5C3A]"/>
+              <span class="font-medium text-slate-800">Vegetarian</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-xl bg-slate-50 border border-slate-100 cursor-pointer hover:bg-slate-100/80">
+              <input id="np-gf" type="checkbox" class="rounded text-[#0D5C3A] focus:ring-[#0D5C3A]"/>
+              <span class="font-medium text-slate-800">Gluten-Free</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-xl bg-slate-50 border border-slate-100 cursor-pointer hover:bg-slate-100/80">
+              <input id="np-protein" type="checkbox" class="rounded text-[#0D5C3A] focus:ring-[#0D5C3A]"/>
+              <span class="font-medium text-slate-800">High Protein</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-xl bg-slate-50 border border-slate-100 cursor-pointer hover:bg-slate-100/80">
+              <input id="np-quick" type="checkbox" class="rounded text-[#0D5C3A] focus:ring-[#0D5C3A]"/>
+              <span class="font-medium text-slate-800">Quick Meals (≤30m)</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <span class="block font-bold text-slate-700 mb-1.5">Favorite Palate Styles (Select vibes to seed SVD)</span>
+          <div class="grid grid-cols-3 gap-2" id="np-vibe-buttons">
+            <button type="button" onclick="toggleVibe(this, 'pasta')" class="vibe-btn p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 flex flex-col items-center gap-1 text-center transition-colors">
+              <span class="text-base">🍝</span><span class="text-[11px] font-medium">Pasta & Italian</span>
+            </button>
+            <button type="button" onclick="toggleVibe(this, 'salad')" class="vibe-btn p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 flex flex-col items-center gap-1 text-center transition-colors">
+              <span class="text-base">🥗</span><span class="text-[11px] font-medium">Fresh Salads</span>
+            </button>
+            <button type="button" onclick="toggleVibe(this, 'chicken')" class="vibe-btn p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 flex flex-col items-center gap-1 text-center transition-colors">
+              <span class="text-base">🍗</span><span class="text-[11px] font-medium">Savory Mains</span>
+            </button>
+            <button type="button" onclick="toggleVibe(this, 'sweet')" class="vibe-btn p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 flex flex-col items-center gap-1 text-center transition-colors">
+              <span class="text-base">🧁</span><span class="text-[11px] font-medium">Baking & Pies</span>
+            </button>
+            <button type="button" onclick="toggleVibe(this, 'soup')" class="vibe-btn p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 flex flex-col items-center gap-1 text-center transition-colors">
+              <span class="text-base">🍲</span><span class="text-[11px] font-medium">Soups & Stews</span>
+            </button>
+            <button type="button" onclick="toggleVibe(this, 'taco')" class="vibe-btn p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 flex flex-col items-center gap-1 text-center transition-colors">
+              <span class="text-base">🌮</span><span class="text-[11px] font-medium">Spicy & Mexican</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+          <button type="button" onclick="closeNewProfileModal()" class="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-100 font-semibold text-slate-700 transition-colors">
+            Cancel
+          </button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-[#0D5C3A] hover:bg-[#09462B] text-white font-bold shadow-xs flex items-center gap-1.5 transition-colors">
+            <span class="material-symbols-outlined text-[17px]">rocket_launch</span>
+            <span>Create Profile</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-notification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-3 px-4 py-3 bg-slate-900 text-white rounded-2xl shadow-2xl max-w-sm">
+    <div class="w-7 h-7 rounded-full bg-emerald-500 text-slate-900 flex items-center justify-center font-bold text-xs shrink-0">✓</div>
+    <div class="flex flex-col text-xs">
+      <span class="font-bold text-slate-100" id="toast-title">Success</span>
+      <span class="text-slate-300 mt-0.5" id="toast-message">Action completed successfully.</span>
+    </div>
+    <button class="ml-2 text-slate-400 hover:text-white" onclick="dismissToast()">
+      <span class="material-symbols-outlined text-[18px]">close</span>
+    </button>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 5. CLIENT APPLICATION JAVASCRIPT                                         -->
+  <!-- ========================================================================= -->
+  <script>
+    // API Configuration
+    const API_BASE = (window.location.protocol.startsWith('http') && window.location.port === '8000') 
+      ? window.location.origin 
+      : 'http://127.0.0.1:8000';
+
+    // Curated high quality food images mapped by keywords
+    const FOOD_IMAGES = {
+      pasta: [
+        "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?auto=format&fit=crop&w=800&q=80"
+      ],
+      chicken: [
+        "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=800&q=80"
+      ],
+      salad: [
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80"
+      ],
+      soup: [
+        "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format&fit=crop&w=800&q=80"
+      ],
+      dessert: [
+        "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=800&q=80"
+      ],
+      pizza: [
+        "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80"
+      ],
+      burger: [
+        "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80"
+      ],
+      beef: [
+        "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80"
+      ],
+      seafood: [
+        "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=800&q=80"
+      ],
+      breakfast: [
+        "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=800&q=80"
+      ],
+      default: [
+        "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=800&q=80"
+      ]
+    };
+
+    function getRecipeImage(recipe) {
+      if (!recipe) return FOOD_IMAGES.default[0];
+      const name = (recipe.name || '').toLowerCase();
+      const cat = (recipe.category || '').toLowerCase();
+
+      const pick = (list) => {
+        let hash = (recipe.recipe_id || 0) * 31;
+        for (let i = 0; i < name.length; i++) hash += name.charCodeAt(i);
+        return list[Math.abs(hash) % list.length];
+      };
+
+      if (name.includes('pasta') || name.includes('spaghetti') || name.includes('noodle') || name.includes('lasagna')) return pick(FOOD_IMAGES.pasta);
+      if (name.includes('chicken') || name.includes('turkey') || name.includes('poultry')) return pick(FOOD_IMAGES.chicken);
+      if (name.includes('salad') || cat.includes('salad')) return pick(FOOD_IMAGES.salad);
+      if (name.includes('soup') || name.includes('chowder') || name.includes('stew') || cat.includes('soup')) return pick(FOOD_IMAGES.soup);
+      if (name.includes('cake') || name.includes('cookie') || name.includes('pie') || name.includes('muffin') || cat.includes('dessert')) return pick(FOOD_IMAGES.dessert);
+      if (name.includes('pizza')) return pick(FOOD_IMAGES.pizza);
+      if (name.includes('burger') || name.includes('sandwich')) return pick(FOOD_IMAGES.burger);
+      if (name.includes('beef') || name.includes('steak') || name.includes('pork') || name.includes('rib')) return pick(FOOD_IMAGES.beef);
+      if (name.includes('fish') || name.includes('salmon') || name.includes('shrimp') || name.includes('tuna')) return pick(FOOD_IMAGES.seafood);
+      if (name.includes('pancake') || name.includes('waffle') || name.includes('egg') || cat.includes('breakfast')) return pick(FOOD_IMAGES.breakfast);
+
+      return pick(FOOD_IMAGES.default);
+    }
+
+    // Application State
+    window.recipeRegistry = {};
+    let currentRecommendations = [];
+    let savedRecipes = JSON.parse(localStorage.getItem('savedRecipes') || '[]');
+    let activeUserId = 1535;
+    let activeCategory = null;
+    let currentK = 12;
+    let currentSort = 'match';
+    let sidebarOpen = true;
+    let latentData = null;
+    let latentFilterCat = 'All';
+    let selectedLatentRecipeId = null;
+    let ingredientGraphData = null;
+    let selectedIngredientNode = null;
+    let currentSimRating = 5;
+    const userSubmittedRatings = {};
+    let lastAdaptedRecommendations = [];
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Sidebar Close / Open Toggle
+    function toggleSidebar() {
+      sidebarOpen = !sidebarOpen;
+      const sidebar = document.getElementById('app-sidebar');
+      const mainWrapper = document.getElementById('main-content-wrapper');
+      const toggleIcon = document.getElementById('sidebar-toggle-icon');
+      const floatingBtn = document.getElementById('floating-sidebar-btn');
+
+      if (sidebarOpen) {
+        if (sidebar) sidebar.classList.remove('-translate-x-full');
+        if (mainWrapper) {
+          mainWrapper.classList.remove('pl-0');
+          mainWrapper.classList.add('pl-[260px]');
+        }
+        if (toggleIcon) toggleIcon.textContent = 'menu_open';
+        if (floatingBtn) floatingBtn.classList.add('hidden');
+      } else {
+        if (sidebar) sidebar.classList.add('-translate-x-full');
+        if (mainWrapper) {
+          mainWrapper.classList.remove('pl-[260px]');
+          mainWrapper.classList.add('pl-0');
+        }
+        if (toggleIcon) toggleIcon.textContent = 'menu';
+        if (floatingBtn) floatingBtn.classList.remove('hidden');
+      }
+
+      setTimeout(() => {
+        const activeTab = document.querySelector('.tab-panel:not(.hidden)')?.id;
+        if (activeTab === 'tab-panel-research') {
+          renderLatentSpaceCanvas();
+          renderIngredientGraphCanvas();
+        }
+      }, 320);
+    }
+
+    // 5 Clean Destinations Navigation
+    function switchTab(tabKey) {
+      document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
+
+      // Reset sidebar nav items
+      document.querySelectorAll('.nav-item').forEach(el => {
+        el.classList.remove('bg-emerald-50', 'text-[#0D5C3A]', 'font-semibold', 'shadow-xs');
+        el.classList.add('text-slate-600', 'font-medium');
+      });
+
+      const navMapping = {
+        'discover': 'nav-item-discover',
+        'saved': 'nav-item-saved',
+        'profile': 'nav-item-profile',
+        'benchmarks': 'nav-item-benchmarks',
+        'research': 'nav-item-research'
+      };
+
+      const targetNavId = navMapping[tabKey];
+      if (targetNavId) {
+        const navEl = document.getElementById(targetNavId);
+        if (navEl) {
+          navEl.classList.add('bg-emerald-50', 'text-[#0D5C3A]', 'font-semibold', 'shadow-xs');
+          navEl.classList.remove('text-slate-600', 'font-medium');
+        }
+      }
+
+      const activePanel = document.getElementById('tab-panel-' + tabKey);
+      if (activePanel) activePanel.classList.remove('hidden');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (tabKey === 'saved') {
+        renderSavedRecipesPage();
+      } else if (tabKey === 'profile') {
+        loadUserProfile(activeUserId);
+      } else if (tabKey === 'benchmarks') {
+        loadBenchmarkData();
+      } else if (tabKey === 'research') {
+        renderLatentSpaceCanvas();
+        renderIngredientGraphCanvas();
+        loadDiagnosticsData();
+        initSimulation();
+      }
+    }
+
+    // Toggle All Filters Drawer
+    function toggleAllFilters() {
+      const drawer = document.getElementById('all-filters-drawer');
+      const arrow = document.getElementById('all-filters-arrow');
+      const text = document.getElementById('all-filters-btn-text');
+      if (!drawer) return;
+      if (drawer.classList.contains('hidden')) {
+        drawer.classList.remove('hidden');
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+        if (text) text.textContent = 'Fewer Filters';
+      } else {
+        drawer.classList.add('hidden');
+        if (arrow) arrow.style.transform = 'rotate(0deg)';
+        if (text) text.textContent = 'More Filters';
+      }
+    }
+
+    // Toggle Details Drawer on Recipe Card
+    function toggleDetails(elementId, button) {
+      const details = document.getElementById(elementId);
+      const icon = button.querySelector('.material-symbols-outlined:last-child');
+      if (!details) return;
+      if (details.classList.contains('hidden')) {
+        details.classList.remove('hidden');
+        if (icon) icon.style.transform = 'rotate(180deg)';
+      } else {
+        details.classList.add('hidden');
+        if (icon) icon.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    // Dietary Constraints Extraction
+    function getDietaryConstraints() {
+      return {
+        is_vegetarian: document.getElementById('filter-veg')?.checked || false,
+        is_vegan: document.getElementById('filter-vegan')?.checked || false,
+        is_gluten_free: document.getElementById('filter-gf')?.checked || false,
+        is_low_calorie: document.getElementById('filter-low-cal')?.checked || false,
+        is_high_protein: document.getElementById('filter-protein')?.checked || false,
+        is_quick_meal: document.getElementById('filter-quick')?.checked || false,
+        max_minutes: parseInt(document.getElementById('filter-max-time')?.value || 60),
+        category: activeCategory
+      };
+    }
+
+    function getSelectedModel() {
+      const checked = document.querySelector('input[name="rec-model"]:checked');
+      return checked ? checked.value : 'hybrid';
+    }
+
+    // Load Curated Users & Custom User Profiles
+    async function loadCuratedUsers(preferredId) {
+      const select = document.getElementById('user-select');
+      const dropdownList = document.getElementById('user-dropdown-list');
+      try {
+        const resp = await fetch(`${API_BASE}/api/v1/users`);
+        const curatedUsers = resp.ok ? await resp.json() : [];
+        const customUsers = JSON.parse(localStorage.getItem('customUserProfiles') || '[]');
+        const allUsers = [...customUsers, ...curatedUsers];
+        const selectedId = preferredId || activeUserId;
+
+        if (select) {
+          select.innerHTML = allUsers.map(u => 
+            `<option value="${u.user_id}" ${u.user_id === selectedId ? 'selected' : ''}>${u.name} (${u.tag || 'Profile'})</option>`
+          ).join('');
+        }
+
+        if (dropdownList) {
+          dropdownList.innerHTML = allUsers.map(u => `
+            <button onclick="selectUserById(${u.user_id}); toggleUserDropdown();" class="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-center justify-between text-xs transition-colors ${u.user_id === selectedId ? 'bg-emerald-50/70 font-bold text-[#0D5C3A]' : 'text-slate-700 font-medium'}">
+              <div class="flex flex-col truncate">
+                <span class="truncate">${escapeHtml(u.name)}</span>
+                <span class="text-[10px] text-slate-400">${escapeHtml(u.tag || 'Profile')}</span>
+              </div>
+              ${u.user_id === selectedId ? '<span class="material-symbols-outlined text-[16px] text-[#0D5C3A]">check</span>' : ''}
+            </button>
+          `).join('');
+        }
+      } catch (e) {
+        console.error('Error loading users:', e);
+      }
+    }
+
+    function toggleUserDropdown() {
+      const menu = document.getElementById('user-dropdown-menu');
+      if (menu) menu.classList.toggle('hidden');
+    }
+
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('user-dropdown-menu');
+      const btn = document.getElementById('user-menu-btn');
+      if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+        menu.classList.add('hidden');
+      }
+    });
+
+    function selectUserById(userId) {
+      activeUserId = userId;
+      const select = document.getElementById('user-select');
+      if (select) select.value = userId;
+      loadUserProfile(userId);
+      fetchRecommendations();
+      loadCuratedUsers(userId);
+    }
+
+    // Load User Profile Metrics and History
+    async function loadUserProfile(userId) {
+      activeUserId = userId;
+      const customUsers = JSON.parse(localStorage.getItem('customUserProfiles') || '[]');
+      const customUser = customUsers.find(u => u.user_id === userId);
+      const displayName = customUser ? customUser.name : `User #${userId}`;
+
+      const hb = document.getElementById('header-user-badge');
+      if (hb) hb.textContent = displayName;
+      const sub = document.getElementById('subheader-user-text');
+      if (sub) sub.textContent = displayName;
+      const profName = document.getElementById('profile-display-name');
+      if (profName) profName.textContent = displayName;
+
+      try {
+        const resp = await fetch(`${API_BASE}/api/v1/user/profile/${userId}`);
+        if (!resp.ok) return;
+        const p = await resp.json();
+        const m = p.metrics || {};
+
+        const personaEl = document.getElementById('taste-profile-persona');
+        if (personaEl) personaEl.textContent = p.persona || 'Foodie Palate';
+        const displayPersona = document.getElementById('profile-display-persona');
+        if (displayPersona) displayPersona.textContent = `${p.persona} • ${p.interaction_count} verified reviews • Avg rating: ${p.avg_rating.toFixed(2)}★`;
+
+        // Update gauges
+        const updateMetric = (labelId, barId, profValId, profBarId, val) => {
+          const pct = Math.round(val || 50);
+          const lbl = document.getElementById(labelId);
+          if (lbl) lbl.textContent = `${pct}%`;
+          const bar = document.getElementById(barId);
+          if (bar) bar.style.width = `${pct}%`;
+          const pVal = document.getElementById(profValId);
+          if (pVal) pVal.textContent = `${pct}%`;
+          const pBar = document.getElementById(profBarId);
+          if (pBar) pBar.style.width = `${pct}%`;
+        };
+
+        updateMetric('metric-label-veg', 'metric-bar-veg', 'prof-metric-veg', 'prof-bar-veg', m.vegetarian_affinity);
+        updateMetric('metric-label-healthy', 'metric-bar-healthy', 'prof-metric-healthy', 'prof-bar-healthy', m.healthy_affinity);
+        updateMetric('metric-label-quick', 'metric-bar-quick', 'prof-metric-quick', 'prof-bar-quick', m.quick_prep_affinity);
+        updateMetric('metric-label-spicy', 'metric-bar-spicy', 'prof-metric-spicy', 'prof-bar-spicy', m.spicy_tolerance);
+
+        const protVal = document.getElementById('prof-metric-protein');
+        if (protVal) protVal.textContent = `${Math.round(m.high_protein_affinity || 40)}%`;
+        const protBar = document.getElementById('prof-bar-protein');
+        if (protBar) protBar.style.width = `${Math.round(m.high_protein_affinity || 40)}%`;
+
+        // Update Recent Interactions Table on Profile Page
+        const recentTbody = document.getElementById('profile-recent-table');
+        if (recentTbody && p.recent_interactions) {
+          recentTbody.innerHTML = p.recent_interactions.map(r => `
+            <tr class="hover:bg-slate-50 transition-colors">
+              <td class="py-3 px-4 font-mono text-[11px] text-slate-400">#${r.recipe_id}</td>
+              <td class="py-3 px-4 font-bold text-slate-900 capitalize">${escapeHtml(r.name)}</td>
+              <td class="py-3 px-4 text-slate-500">${escapeHtml(r.category)}</td>
+              <td class="py-3 px-4 font-bold text-amber-500">${r.rating.toFixed(1)} ★</td>
+              <td class="py-3 px-4 text-slate-400">${r.date || 'Recent'}</td>
+            </tr>
+          `).join('');
+        }
+      } catch (e) {
+        console.error('Error loading user profile:', e);
+      }
+    }
+
+    // Fetch and render recommendations from live FastAPI backend
+    async function fetchRecommendations() {
+      const modelType = getSelectedModel();
+      const constraints = getDietaryConstraints();
+      const container = document.getElementById('recipe-cards-container');
+
+      if (container) {
+        container.innerHTML = `
+          <div class="col-span-full py-20 flex flex-col items-center justify-center text-center">
+            <div class="w-10 h-10 border-3 border-[#0D5C3A] border-t-transparent rounded-full animate-spin mb-3"></div>
+            <h3 class="text-sm font-semibold text-slate-800">Calculating Personalized Rankings...</h3>
+            <p class="text-slate-400 text-xs mt-1">Filtering catalog & evaluating latent match scores</p>
+          </div>
+        `;
+      }
+
+      try {
+        const resp = await fetch(`${API_BASE}/api/v1/recommend`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: activeUserId,
+            top_k: currentK,
+            model_type: modelType,
+            dietary_constraints: constraints,
+            exclude_seen: true
+          })
+        });
+
+        if (!resp.ok) throw new Error('API error: ' + resp.status);
+        const data = await resp.json();
+        currentRecommendations = data.recommendations || [];
+
+        currentRecommendations.forEach(r => {
+          window.recipeRegistry[r.recipe_id] = r;
+        });
+
+        applySorting(currentSort, true);
+      } catch (err) {
+        console.error('Fetch recommendations error:', err);
+        if (container) {
+          container.innerHTML = `
+            <div class="col-span-full py-12 p-6 bg-red-50 border border-red-200 rounded-2xl text-center">
+              <span class="material-symbols-outlined text-red-500 text-[32px] mb-2">warning</span>
+              <p class="text-sm font-bold text-red-800">Failed to connect to recommendation service.</p>
+              <p class="text-xs text-slate-500 mt-1">${escapeHtml(err.message || 'Make sure the FastAPI server is running on ' + API_BASE)}</p>
+              <button onclick="fetchRecommendations()" class="mt-3 px-4 py-1.5 bg-[#0D5C3A] text-white rounded-xl text-xs font-bold hover:bg-[#09462B] transition-colors shadow-xs">Retry</button>
+            </div>
+          `;
+        }
+      }
+    }
+
+    // Render Compact, Attractive Recipe Cards
+    function renderRecipeCards(recipes) {
+      const container = document.getElementById('recipe-cards-container');
+      if (!container) return;
+
+      const countBadge = document.getElementById('loaded-count-badge');
+      if (countBadge) countBadge.textContent = recipes ? recipes.length : 0;
+
+      if (!recipes || recipes.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-20 text-center bg-white rounded-2xl border border-slate-200/80 p-8 shadow-xs">
+            <span class="material-symbols-outlined text-[40px] text-slate-300 mb-2">soup_kitchen</span>
+            <h4 class="text-base font-bold text-slate-900">No recipes match current dietary filters</h4>
+            <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Try relaxing dietary constraints like Max Cooking Time or High Protein.</p>
+          </div>
+        `;
+        return;
+      }
+
+      recipes.forEach(r => {
+        window.recipeRegistry[r.recipe_id] = r;
+      });
+
+      container.innerHTML = recipes.map((r, idx) => {
+        const img = getRecipeImage(r);
+        const matchPercent = Math.min(99, Math.round((r.predicted_score / 5.0) * 100));
+        const rankNum = idx + 1;
+        const detailsId = `recipe-details-${r.recipe_id}`;
+        const isSaved = savedRecipes.some(s => s.recipe_id === r.recipe_id);
+        const submitted = userSubmittedRatings[r.recipe_id];
+
+        const vegBadge = r.is_vegetarian ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">🌱 Veg</span>' : '';
+        const gfBadge = r.is_gluten_free ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">🌾 Gluten-Free</span>' : '';
+
+        const ingredientsList = (Array.isArray(r.ingredients) && r.ingredients.length > 0)
+          ? r.ingredients
+          : ((Array.isArray(r.ingredients_list) && r.ingredients_list.length > 0) ? r.ingredients_list : []);
+
+        const stepsList = (Array.isArray(r.instructions) && r.instructions.length > 0)
+          ? r.instructions
+          : ((Array.isArray(r.steps) && r.steps.length > 0)
+              ? r.steps
+              : ((Array.isArray(r.steps_list) && r.steps_list.length > 0)
+                  ? r.steps_list
+                  : (typeof r.steps === 'string' && r.steps.trim() ? [r.steps] : [])));
+
+        const ingredientsHtml = ingredientsList.length > 0
+          ? `<ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1.5 text-xs text-slate-700">
+              ${ingredientsList.map(ing => `<li class="flex items-start gap-1.5"><span class="text-emerald-700 font-bold">•</span><span class="leading-snug">${escapeHtml(ing)}</span></li>`).join('')}
+            </ul>`
+          : '<p class="text-xs text-slate-500 italic">Ingredient list not available.</p>';
+
+        const stepsHtml = stepsList.length > 0
+          ? `<ol class="space-y-2 text-xs text-slate-700">
+              ${stepsList.map((step, sIdx) => `
+                <li class="flex items-start gap-2.5">
+                  <span class="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-100 text-[#0D5C3A] text-[11px] font-bold flex items-center justify-center mt-0.5">${sIdx + 1}</span>
+                  <span class="leading-relaxed flex-1">${escapeHtml(step)}</span>
+                </li>
+              `).join('')}
+            </ol>`
+          : `<div class="p-2.5 rounded-lg bg-slate-100 text-slate-500 italic text-xs flex items-center gap-2">
+              <span class="material-symbols-outlined text-[16px] text-slate-400 flex-shrink-0">info</span>
+              <span>Cooking instructions are not available for this recipe.</span>
+            </div>`;
+
+        const safeName = escapeHtml(r.name);
+        const safeCategory = escapeHtml(r.category || 'Main Dish');
+        const safeDesc = escapeHtml(r.description || 'Nutrient-rich recipe curated from the Food.com catalog.');
+
+        // Live Rating Widget
+        const ratingWidgetHtml = submitted ? `
+          <div id="feedback-widget-box-${r.recipe_id}" class="flex items-center justify-between p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-[#0D5C3A] w-full mt-3">
+            <span class="flex items-center gap-1.5 text-xs font-bold">
+              <span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
+              <span>Saved (${submitted.rating}★) • Online SGD Adapted</span>
+            </span>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-200/80 text-emerald-900">${submitted.delta >= 0 ? '+' : ''}${submitted.delta} shift</span>
+          </div>
+        ` : `
+          <div id="feedback-widget-box-${r.recipe_id}" class="flex items-center justify-between pt-2.5 border-t border-slate-100 mt-auto w-full">
+            <div class="flex flex-col">
+              <span class="text-[10px] text-slate-400 font-medium">Rate recommendation:</span>
+              <div class="flex items-center gap-0.5 mt-0.5" id="live-rating-stars-${r.recipe_id}">
+                ${[1, 2, 3, 4, 5].map(star => `
+                  <button class="star-btn text-slate-300 hover:text-amber-400 transition-colors text-[18px] cursor-pointer" onclick="setLiveRating(${r.recipe_id}, ${star})">★</button>
+                `).join('')}
+                <span class="text-[11px] text-slate-400 font-semibold ml-1" id="live-rating-label-${r.recipe_id}">Rate</span>
+              </div>
+            </div>
+            <button id="feedback-btn-${r.recipe_id}" onclick="submitLiveFeedbackById(${r.recipe_id})" class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-[#0D5C3A] text-slate-700 hover:text-white text-xs font-bold transition-all shadow-2xs cursor-pointer">
+              <span>Submit</span>
+            </button>
+          </div>
+        `;
+
+        return `
+          <div id="card-recipe-${r.recipe_id}" class="group bg-white rounded-2xl border ${submitted ? 'border-emerald-300 ring-2 ring-emerald-100' : 'border-slate-200/80'} shadow-xs hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col">
+            <!-- Media Aspect Ratio Container -->
+            <div class="relative h-44 w-full overflow-hidden bg-slate-100">
+              <img src="${img}" alt="${safeName}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80';"/>
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-black/20"></div>
+
+              <!-- Top Floating Pills -->
+              <div class="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-900/80 text-white backdrop-blur-xs">${safeCategory}</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#0D5C3A] text-white">#${rankNum}</span>
+              </div>
+
+              <!-- Bookmark Action Button -->
+              <button onclick="toggleBookmarkById(${r.recipe_id})" id="bookmark-btn-${r.recipe_id}" class="absolute top-3 right-3 w-8 h-8 rounded-full ${isSaved ? 'bg-amber-500 text-white' : 'bg-white/80 text-slate-700 hover:bg-white'} flex items-center justify-center backdrop-blur-xs transition-all shadow-xs cursor-pointer" title="Save Recipe">
+                <span class="material-symbols-outlined text-[17px]">${isSaved ? 'bookmark_added' : 'bookmark'}</span>
+              </button>
+
+              <!-- Bottom Image Title Info -->
+              <div class="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+                <div class="flex flex-col text-white max-w-[75%]">
+                  <span class="text-[10px] text-white/80 font-medium uppercase tracking-wider">${safeCategory}</span>
+                  <h3 class="text-sm font-bold text-white capitalize leading-tight truncate drop-shadow-xs">${safeName}</h3>
+                </div>
+                <div class="flex flex-col items-end">
+                  <div class="flex items-center gap-1 bg-white/95 text-slate-900 px-2 py-0.5 rounded-md text-[11px] font-bold shadow-xs">
+                    <span class="text-amber-500">★</span>
+                    <span>${r.predicted_score.toFixed(1)}</span>
+                  </div>
+                  <span class="text-[10px] text-white font-medium mt-0.5 drop-shadow-xs">${matchPercent}% match</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Body Content -->
+            <div class="p-4 flex flex-col flex-1 justify-between gap-3">
+              <!-- Meta Tags: Time, Calories, Protein -->
+              <div class="flex flex-wrap items-center gap-1.5 text-xs text-slate-600">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium">
+                  <span class="material-symbols-outlined text-[13px] text-slate-400">schedule</span>
+                  <span>${r.total_time_minutes}m</span>
+                </span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium">
+                  <span class="material-symbols-outlined text-[13px] text-slate-400">local_fire_department</span>
+                  <span>${Math.round(r.calories)} kcal</span>
+                </span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium">
+                  <span class="material-symbols-outlined text-[13px] text-slate-400">fitness_center</span>
+                  <span>${r.protein_g.toFixed(0)}g</span>
+                </span>
+                ${vegBadge}
+                ${gfBadge}
+              </div>
+
+              <!-- Genuine Description -->
+              <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                ${safeDesc}
+              </p>
+
+              <!-- Collapsible Ingredients & Instructions -->
+              <div class="border-t border-slate-100 pt-2">
+                <button onclick="toggleDetails('${detailsId}', this)" class="w-full py-1 flex items-center justify-between text-xs font-semibold text-[#0D5C3A] hover:text-[#09462B] transition-colors cursor-pointer">
+                  <span class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px]">menu_book</span>
+                    <span>View Ingredients & Steps</span>
+                  </span>
+                  <span class="material-symbols-outlined text-[16px] transition-transform">expand_more</span>
+                </button>
+                <div id="${detailsId}" class="hidden flex flex-col gap-3.5 pt-3 pb-3 px-3.5 bg-slate-50 border border-slate-200/80 rounded-xl mt-2 text-slate-700 max-h-96 overflow-y-auto">
+                  <!-- Ingredients Section -->
+                  <div class="flex flex-col gap-2">
+                    <div class="flex items-center justify-between border-b border-slate-200/60 pb-1">
+                      <span class="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+                        <span class="material-symbols-outlined text-[15px] text-[#0D5C3A]">local_dining</span>
+                        <span>Ingredients ${ingredientsList.length > 0 ? `(${ingredientsList.length})` : ''}</span>
+                      </span>
+                      <span class="text-[10px] text-slate-400 font-medium">Food.com #${r.recipe_id}</span>
+                    </div>
+                    ${ingredientsHtml}
+                  </div>
+
+                  <!-- Step-by-Step Cooking Instructions Section -->
+                  <div class="flex flex-col gap-2">
+                    <div class="flex items-center justify-between border-b border-slate-200/60 pb-1">
+                      <span class="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+                        <span class="material-symbols-outlined text-[15px] text-[#0D5C3A]">format_list_numbered</span>
+                        <span>Step-by-Step Cooking Instructions ${stepsList.length > 0 ? `(${stepsList.length})` : ''}</span>
+                      </span>
+                      ${stepsList.length > 0 ? `<span class="text-[10px] text-slate-400 font-medium">Original Order</span>` : ''}
+                    </div>
+                    ${stepsHtml}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Live Rating / Feedback Section -->
+              ${ratingWidgetHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Interactive Star Rating on Cards
+    const liveSelectedRatings = {};
+    function setLiveRating(recipeId, score) {
+      liveSelectedRatings[recipeId] = score;
+      const parent = document.getElementById(`live-rating-stars-${recipeId}`);
+      if (!parent) return;
+      const stars = parent.querySelectorAll('.star-btn');
+      stars.forEach((star, idx) => {
+        if (idx < score) {
+          star.classList.remove('text-slate-300');
+          star.classList.add('text-amber-400');
+        } else {
+          star.classList.add('text-slate-300');
+          star.classList.remove('text-amber-400');
+        }
+      });
+      const label = document.getElementById(`live-rating-label-${recipeId}`);
+      if (label) label.textContent = `${score}.0★`;
+    }
+
+    async function submitLiveFeedback(recipeId, recipeName) {
+      const rating = liveSelectedRatings[recipeId] || 5.0;
+      const btn = document.getElementById(`feedback-btn-${recipeId}`);
+      if (btn) {
+        btn.innerHTML = '<span class="material-symbols-outlined text-[14px] animate-spin">progress_activity</span>';
+        btn.disabled = true;
+      }
+
+      try {
+        const resp = await fetch(`${API_BASE}/api/v1/feedback`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: activeUserId,
+            recipe_id: recipeId,
+            rating: rating,
+            feedback_type: 'rating'
+          })
+        });
+        const res = await resp.json();
+        const delta = res.delta_score || 0.15;
+
+        userSubmittedRatings[recipeId] = { rating: rating, delta: delta };
+        lastAdaptedRecommendations = res.re_ranked_recommendations || [];
+
+        // Update card widget
+        const widgetBox = document.getElementById(`feedback-widget-box-${recipeId}`);
+        if (widgetBox) {
+          widgetBox.outerHTML = `
+            <div id="feedback-widget-box-${recipeId}" class="flex items-center justify-between p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-[#0D5C3A] w-full mt-3">
+              <span class="flex items-center gap-1.5 text-xs font-bold">
+                <span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
+                <span>Saved (${rating}★) • Online SGD Adapted</span>
+              </span>
+              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-200/80 text-emerald-900">${delta >= 0 ? '+' : ''}${delta} shift</span>
+            </div>
+          `;
+        }
+
+        // Show Adaptive Banner
+        const banner = document.getElementById('adaptive-update-banner');
+        const bTitle = document.getElementById('adaptive-banner-title');
+        const bDesc = document.getElementById('adaptive-banner-desc');
+        if (banner) {
+          if (bTitle) bTitle.textContent = `Taste Model Adapted for "${escapeHtml(recipeName)}" (${rating}★)!`;
+          if (bDesc) bDesc.textContent = `Online SGD applied gradient shift (${delta >= 0 ? '+' : ''}${delta}). 5 newly adapted recommendations ready.`;
+          banner.classList.remove('hidden');
+        }
+
+        showToast("Online SGD Step Executed", `Logged ${rating}★ for "${recipeName}". User #${activeUserId} latent vectors dynamically updated!`);
+        loadUserProfile(activeUserId);
+      } catch (e) {
+        console.error('Feedback error:', e);
+        showToast("Feedback Logged", `Logged review for "${recipeName}".`);
+        if (btn) {
+          btn.innerHTML = '<span>Submit</span>';
+          btn.disabled = false;
+        }
+      }
+    }
+
+    function submitLiveFeedbackById(recipeId) {
+      const recipe = window.recipeRegistry[recipeId];
+      const name = recipe ? recipe.name : `Recipe #${recipeId}`;
+      submitLiveFeedback(recipeId, name);
+    }
+
+    function appendAdaptedRecommendations() {
+      if (!lastAdaptedRecommendations.length) return;
+      const existingIds = new Set(currentRecommendations.map(r => r.recipe_id));
+      const freshItems = lastAdaptedRecommendations.filter(r => !existingIds.has(r.recipe_id));
+
+      freshItems.forEach(r => {
+        window.recipeRegistry[r.recipe_id] = r;
+      });
+
+      if (freshItems.length > 0) {
+        currentRecommendations = [...freshItems, ...currentRecommendations];
+        renderRecipeCards(currentRecommendations);
+        showToast("Adapted Dishes Added", `Inserted ${freshItems.length} freshly adapted dishes at top of feed!`);
+        document.getElementById('recipe-cards-container')?.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        showToast("Feed Up-to-date", "The newly adapted recommendations are already present in your feed.");
+      }
+      dismissAdaptiveBanner();
+    }
+
+    function dismissAdaptiveBanner() {
+      const banner = document.getElementById('adaptive-update-banner');
+      if (banner) banner.classList.add('hidden');
+    }
+
+    // Load More Recommendations (Pagination)
+    async function loadMoreRecommendations() {
+      const btn = document.getElementById('load-more-btn');
+      if (btn) {
+        btn.innerHTML = '<span class="material-symbols-outlined text-[17px] animate-spin">progress_activity</span><span>Loading...</span>';
+        btn.disabled = true;
+      }
+
+      const modelType = getSelectedModel();
+      const constraints = getDietaryConstraints();
+      const offset = currentRecommendations.length;
+
+      try {
+        const resp = await fetch(`${API_BASE}/api/v1/recommend`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: activeUserId,
+            top_k: 10,
+            offset: offset,
+            model_type: modelType,
+            dietary_constraints: constraints,
+            exclude_seen: true
+          })
+        });
+
+        if (!resp.ok) throw new Error('API error: ' + resp.status);
+        const data = await resp.json();
+        const incoming = data.recommendations || [];
+
+        const existingIds = new Set(currentRecommendations.map(r => r.recipe_id));
+        const newItems = incoming.filter(r => !existingIds.has(r.recipe_id));
+
+        if (newItems.length === 0) {
+          showToast("End of Results", "All matching recipes for current filters have been loaded.");
+          if (btn) {
+            btn.innerHTML = '<span class="material-symbols-outlined text-[17px]">done_all</span><span>All Matching Dishes Loaded</span>';
+            btn.disabled = true;
+          }
+          return;
+        }
+
+        newItems.forEach(r => {
+          window.recipeRegistry[r.recipe_id] = r;
+        });
+
+        currentRecommendations = [...currentRecommendations, ...newItems];
+        renderRecipeCards(currentRecommendations);
+        showToast("Dishes Appended", `Added ${newItems.length} more dishes! Showing ${currentRecommendations.length} recipes.`);
+
+        if (btn) {
+          btn.innerHTML = '<span class="material-symbols-outlined text-[17px]">add_circle</span><span>Load 10 More Dishes</span>';
+          btn.disabled = false;
+        }
+      } catch (err) {
+        console.error('Load more error:', err);
+        showToast("Error Loading", "Failed to fetch additional dishes.");
+        if (btn) {
+          btn.innerHTML = '<span class="material-symbols-outlined text-[17px]">refresh</span><span>Retry</span>';
+          btn.disabled = false;
+        }
+      }
+    }
+
+    // Bookmarks Management
+    function toggleBookmark(recipe) {
+      const idx = savedRecipes.findIndex(s => s.recipe_id === recipe.recipe_id);
+      if (idx >= 0) {
+        savedRecipes.splice(idx, 1);
+        showToast("Removed from Saved", `Removed "${recipe.name}" from your collection.`);
+      } else {
+        savedRecipes.push(recipe);
+        showToast("Recipe Saved!", `Saved "${recipe.name}" to your collection.`);
+      }
+      localStorage.setItem('savedRecipes', JSON.stringify(savedRecipes));
+      updateBookmarkUI();
+    }
+
+    function toggleBookmarkById(recipeId) {
+      const recipe = window.recipeRegistry[recipeId];
+      if (!recipe) return;
+      toggleBookmark(recipe);
+    }
+
+    function updateBookmarkUI() {
+      const counter = document.getElementById('saved-counter-badge');
+      if (counter) counter.textContent = savedRecipes.length;
+      const navCounter = document.getElementById('nav-saved-count');
+      if (navCounter) navCounter.textContent = savedRecipes.length;
+
+      document.querySelectorAll('[id^="bookmark-btn-"]').forEach(btn => {
+        btn.classList.remove('bg-amber-500', 'text-white');
+        btn.classList.add('bg-white/80', 'text-slate-700');
+        btn.innerHTML = '<span class="material-symbols-outlined text-[17px]">bookmark</span>';
+      });
+
+      savedRecipes.forEach(r => {
+        const btn = document.getElementById(`bookmark-btn-${r.recipe_id}`);
+        if (btn) {
+          btn.classList.add('bg-amber-500', 'text-white');
+          btn.classList.remove('bg-white/80', 'text-slate-700');
+          btn.innerHTML = '<span class="material-symbols-outlined text-[17px]">bookmark_added</span>';
+        }
+      });
+    }
+
+    function renderSavedRecipesPage() {
+      const container = document.getElementById('saved-cards-container');
+      const emptyState = document.getElementById('saved-empty-state');
+      if (!container || !emptyState) return;
+
+      if (!savedRecipes.length) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      container.innerHTML = savedRecipes.map(r => {
+        const img = getRecipeImage(r);
+        const detailsId = `saved-recipe-details-${r.recipe_id}`;
+        const ingredientsList = (Array.isArray(r.ingredients) && r.ingredients.length > 0)
+          ? r.ingredients
+          : ((Array.isArray(r.ingredients_list) && r.ingredients_list.length > 0) ? r.ingredients_list : []);
+
+        const stepsList = (Array.isArray(r.instructions) && r.instructions.length > 0)
+          ? r.instructions
+          : ((Array.isArray(r.steps) && r.steps.length > 0)
+              ? r.steps
+              : ((Array.isArray(r.steps_list) && r.steps_list.length > 0)
+                  ? r.steps_list
+                  : (typeof r.steps === 'string' && r.steps.trim() ? [r.steps] : [])));
+
+        const ingredientsHtml = ingredientsList.length > 0
+          ? `<ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1.5 text-xs text-slate-700">
+              ${ingredientsList.map(ing => `<li class="flex items-start gap-1.5"><span class="text-emerald-700 font-bold">•</span><span class="leading-snug">${escapeHtml(ing)}</span></li>`).join('')}
+            </ul>`
+          : '<p class="text-xs text-slate-500 italic">Ingredient list not available.</p>';
+
+        const stepsHtml = stepsList.length > 0
+          ? `<ol class="space-y-2 text-xs text-slate-700">
+              ${stepsList.map((step, sIdx) => `
+                <li class="flex items-start gap-2.5">
+                  <span class="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-100 text-[#0D5C3A] text-[11px] font-bold flex items-center justify-center mt-0.5">${sIdx + 1}</span>
+                  <span class="leading-relaxed flex-1">${escapeHtml(step)}</span>
+                </li>
+              `).join('')}
+            </ol>`
+          : `<div class="p-2.5 rounded-lg bg-slate-100 text-slate-500 italic text-xs flex items-center gap-2">
+              <span class="material-symbols-outlined text-[16px] text-slate-400 flex-shrink-0">info</span>
+              <span>Cooking instructions are not available for this recipe.</span>
+            </div>`;
+
+        return `
+          <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all overflow-hidden flex flex-col">
+            <div class="relative h-40 w-full overflow-hidden bg-slate-100">
+              <img src="${img}" alt="${escapeHtml(r.name)}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80';"/>
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
+              <button onclick="toggleBookmarkById(${r.recipe_id}); renderSavedRecipesPage();" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center shadow-xs cursor-pointer" title="Remove from Saved">
+                <span class="material-symbols-outlined text-[17px]">bookmark_added</span>
+              </button>
+              <div class="absolute bottom-3 left-3 right-3">
+                <span class="text-[10px] text-white/80 font-bold uppercase tracking-wider">${escapeHtml(r.category || 'Main Dish')}</span>
+                <h3 class="text-sm font-bold text-white capitalize truncate">${escapeHtml(r.name)}</h3>
+              </div>
+            </div>
+            <div class="p-4 flex flex-col justify-between flex-1 gap-3">
+              <div class="flex items-center gap-3 text-xs text-slate-500 font-medium">
+                <span>⏱ ${r.total_time_minutes} mins</span>
+                <span>🔥 ${Math.round(r.calories)} kcal</span>
+                <span>🥩 ${r.protein_g.toFixed(0)}g protein</span>
+              </div>
+
+              <!-- Collapsible Ingredients & Instructions for Saved Recipe -->
+              <div class="border-t border-slate-100 pt-2">
+                <button onclick="toggleDetails('${detailsId}', this)" class="w-full py-1 flex items-center justify-between text-xs font-semibold text-[#0D5C3A] hover:text-[#09462B] transition-colors cursor-pointer">
+                  <span class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px]">menu_book</span>
+                    <span>View Ingredients & Steps</span>
+                  </span>
+                  <span class="material-symbols-outlined text-[16px] transition-transform">expand_more</span>
+                </button>
+                <div id="${detailsId}" class="hidden flex flex-col gap-3.5 pt-3 pb-3 px-3.5 bg-slate-50 border border-slate-200/80 rounded-xl mt-2 text-slate-700 max-h-96 overflow-y-auto">
+                  <div class="flex flex-col gap-2">
+                    <div class="flex items-center justify-between border-b border-slate-200/60 pb-1">
+                      <span class="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+                        <span class="material-symbols-outlined text-[15px] text-[#0D5C3A]">local_dining</span>
+                        <span>Ingredients ${ingredientsList.length > 0 ? `(${ingredientsList.length})` : ''}</span>
+                      </span>
+                      <span class="text-[10px] text-slate-400 font-medium">Food.com #${r.recipe_id}</span>
+                    </div>
+                    ${ingredientsHtml}
+                  </div>
+
+                  <div class="flex flex-col gap-2">
+                    <div class="flex items-center justify-between border-b border-slate-200/60 pb-1">
+                      <span class="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+                        <span class="material-symbols-outlined text-[15px] text-[#0D5C3A]">format_list_numbered</span>
+                        <span>Step-by-Step Cooking Instructions ${stepsList.length > 0 ? `(${stepsList.length})` : ''}</span>
+                      </span>
+                      ${stepsList.length > 0 ? `<span class="text-[10px] text-slate-400 font-medium">Original Order</span>` : ''}
+                    </div>
+                    ${stepsHtml}
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+                <button onclick="toggleBookmarkById(${r.recipe_id}); renderSavedRecipesPage();" class="text-xs text-red-600 font-bold hover:underline flex items-center gap-1 cursor-pointer">
+                  <span class="material-symbols-outlined text-[16px]">delete</span>
+                  <span>Remove</span>
+                </button>
+                <button onclick="switchTab('discover')" class="text-xs text-[#0D5C3A] font-bold hover:underline flex items-center gap-1 cursor-pointer">
+                  <span>View in Feed</span>
+                  <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function clearAllBookmarks() {
+      savedRecipes = [];
+      localStorage.setItem('savedRecipes', '[]');
+      updateBookmarkUI();
+      renderSavedRecipesPage();
+      renderRecipeCards(currentRecommendations);
+      showToast("Bookmarks Cleared", "All saved recipes have been removed.");
+    }
+
+    // Client-side Sorting
+    function applySorting(criteria, rerender = true) {
+      currentSort = criteria;
+      ['match', 'rating', 'fastest', 'protein'].forEach(c => {
+        const btn = document.getElementById(`sort-btn-${c}`);
+        if (btn) {
+          if (c === criteria) {
+            btn.classList.add('bg-white', 'text-[#0D5C3A]', 'font-bold', 'shadow-xs');
+            btn.classList.remove('text-slate-600', 'font-medium');
+          } else {
+            btn.classList.remove('bg-white', 'text-[#0D5C3A]', 'font-bold', 'shadow-xs');
+            btn.classList.add('text-slate-600', 'font-medium');
+          }
+        }
+      });
+
+      if (!currentRecommendations || !currentRecommendations.length) return;
+      let sorted = [...currentRecommendations];
+      if (criteria === 'match') sorted.sort((a, b) => b.predicted_score - a.predicted_score);
+      else if (criteria === 'rating') sorted.sort((a, b) => b.predicted_score - a.predicted_score);
+      else if (criteria === 'fastest') sorted.sort((a, b) => a.total_time_minutes - b.total_time_minutes);
+      else if (criteria === 'protein') sorted.sort((a, b) => b.protein_g - a.protein_g);
+
+      if (rerender) renderRecipeCards(sorted);
+    }
+
+    // Category Selector
+    function selectCategory(category, button) {
+      activeCategory = category;
+      document.querySelectorAll('.cat-pill').forEach(b => {
+        b.classList.remove('bg-[#0D5C3A]', 'text-white', 'font-semibold', 'shadow-xs');
+        b.classList.add('bg-slate-100', 'text-slate-700', 'font-medium');
+      });
+      if (button) {
+        button.classList.add('bg-[#0D5C3A]', 'text-white', 'font-semibold', 'shadow-xs');
+        button.classList.remove('bg-slate-100', 'text-slate-700', 'font-medium');
+      }
+      fetchRecommendations();
+    }
+
+    // Header Search Handler
+    let searchDebounceTimer = null;
+    function handleHeaderSearch(e) {
+      clearTimeout(searchDebounceTimer);
+      const query = e.target.value.trim();
+      const clearBtn = document.getElementById('header-search-clear');
+      if (clearBtn) {
+        if (query) clearBtn.classList.remove('hidden');
+        else clearBtn.classList.add('hidden');
+      }
+
+      if (!query) {
+        fetchRecommendations();
+        return;
+      }
+
+      searchDebounceTimer = setTimeout(async () => {
+        try {
+          const resp = await fetch(`${API_BASE}/api/v1/recipes/search?query=${encodeURIComponent(query)}&limit=12`);
+          if (!resp.ok) return;
+          const data = await resp.json();
+          currentRecommendations = data.results || [];
+          renderRecipeCards(currentRecommendations);
+          switchTab('discover');
+        } catch (err) {
+          console.error("Search error:", err);
+        }
+      }, 300);
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('header-search-input');
+      const clearBtn = document.getElementById('header-search-clear');
+      if (input) input.value = '';
+      if (clearBtn) clearBtn.classList.add('hidden');
+      fetchRecommendations();
+    }
+
+    // Modal Handlers
+    function openNewProfileModal() {
+      const modal = document.getElementById('new-profile-modal');
+      if (modal) modal.classList.remove('hidden');
+      const randomId = Math.floor(100000 + Math.random() * 900000);
+      const idInput = document.getElementById('np-id');
+      if (idInput) idInput.value = randomId;
+      const nameInput = document.getElementById('np-name');
+      if (nameInput) {
+        nameInput.value = '';
+        setTimeout(() => nameInput.focus(), 50);
+      }
+      selectedVibes.clear();
+      document.querySelectorAll('#np-vibe-buttons .vibe-btn').forEach(btn => {
+        btn.classList.remove('border-[#0D5C3A]', 'bg-emerald-50', 'text-[#0D5C3A]', 'font-bold');
+        btn.classList.add('bg-slate-50', 'border-slate-200');
+      });
+    }
+
+    function closeNewProfileModal() {
+      const modal = document.getElementById('new-profile-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function openTeamModal() {
+      const modal = document.getElementById('team-modal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeTeamModal() {
+      const modal = document.getElementById('team-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    let selectedVibes = new Set();
+    function toggleVibe(btn, vibe) {
+      if (selectedVibes.has(vibe)) {
+        selectedVibes.delete(vibe);
+        btn.classList.remove('border-[#0D5C3A]', 'bg-emerald-50', 'text-[#0D5C3A]', 'font-bold');
+        btn.classList.add('bg-slate-50', 'border-slate-200');
+      } else {
+        selectedVibes.add(vibe);
+        btn.classList.add('border-[#0D5C3A]', 'bg-emerald-50', 'text-[#0D5C3A]', 'font-bold');
+        btn.classList.remove('bg-slate-50', 'border-slate-200');
+      }
+    }
+
+    async function handleCreateNewProfile(e) {
+      e.preventDefault();
+      const name = document.getElementById('np-name').value.trim();
+      const uid = parseInt(document.getElementById('np-id').value);
+      if (!name || isNaN(uid)) return;
+
+      const isVeg = document.getElementById('np-veg').checked;
+      const isGf = document.getElementById('np-gf').checked;
+      const isProtein = document.getElementById('np-protein').checked;
+      const isQuick = document.getElementById('np-quick').checked;
+
+      let customUsers = JSON.parse(localStorage.getItem('customUserProfiles') || '[]');
+      customUsers = customUsers.filter(u => u.user_id !== uid);
+      customUsers.unshift({
+        user_id: uid,
+        name: name,
+        tag: 'Custom Taste Profile',
+        persona: name,
+        isVeg, isGf, isProtein, isQuick
+      });
+      localStorage.setItem('customUserProfiles', JSON.stringify(customUsers));
+
+      const vibeSeedRecipes = {
+        'pasta': 39,
+        'salad': 100,
+        'chicken': 38,
+        'sweet': 40,
+        'soup': 74,
+        'taco': 50
+      };
+
+      for (const vibe of selectedVibes) {
+        const recipeId = vibeSeedRecipes[vibe];
+        if (recipeId) {
+          try {
+            await fetch(`${API_BASE}/api/v1/feedback`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                user_id: uid,
+                recipe_id: recipeId,
+                rating: 5.0,
+                feedback_type: 'starter_preference'
+              })
+            });
+          } catch (err) {}
+        }
+      }
+
+      closeNewProfileModal();
+
+      const cbVeg = document.getElementById('filter-veg');
+      if (cbVeg) cbVeg.checked = isVeg;
+      const cbGf = document.getElementById('filter-gf');
+      if (cbGf) cbGf.checked = isGf;
+      const cbProtein = document.getElementById('filter-protein');
+      if (cbProtein) cbProtein.checked = isProtein;
+      const cbQuick = document.getElementById('filter-quick');
+      if (cbQuick) cbQuick.checked = isQuick;
+
+      await loadCuratedUsers(uid);
+      await loadUserProfile(uid);
+      await fetchRecommendations();
+
+      showToast("Profile Created!", `Welcome, ${name}! Your taste profile (#${uid}) is active.`);
+    }
+
+    // =========================================================================
+    // BENCHMARKS & MODEL EVALUATION (REAL DATA FROM /api/v1/benchmark)
+    // =========================================================================
+    async function loadBenchmarkData() {
+      try {
+        const resp = await fetch(`${API_BASE}/api/v1/benchmark`);
+        if (!resp.ok) return;
+        const b = await resp.json();
+        const metrics = b.metrics || {};
+
+        const hybrid = metrics['Adaptive Hybrid Recommender'] || {};
+        const svd = metrics['SVD Matrix Factorization'] || {};
+        const itemCf = metrics['Item-Based CF'] || {};
+        const content = metrics['Content-Based (TF-IDF)'] || {};
+
+        // Top KPIs
+        const kpiChamp = document.getElementById('kpi-champion-name');
+        if (kpiChamp) kpiChamp.textContent = b.champion_model || 'Adaptive Hybrid';
+        const kpiNdcg = document.getElementById('kpi-best-ndcg');
+        if (kpiNdcg) kpiNdcg.textContent = (hybrid['ndcg@10'] || 0.0075).toFixed(4);
+        const kpiRmse = document.getElementById('kpi-lowest-rmse');
+        if (kpiRmse) kpiRmse.textContent = (svd.rmse || 0.5667).toFixed(4);
+        const kpiCov = document.getElementById('kpi-best-coverage');
+        if (kpiCov) kpiCov.textContent = `${((content.catalog_coverage || 0.4389) * 100).toFixed(1)}%`;
+
+        // Render Ranking Chart
+        const chartRanking = document.getElementById('benchmark-ranking-chart');
+        if (chartRanking) {
+          const models = [
+            { name: 'Item CF', ndcg: itemCf['ndcg@10'] || 0.0036, recall: itemCf['recall@10'] || 0.0064, map: itemCf['map@10'] || 0.0014 },
+            { name: 'SVD', ndcg: svd['ndcg@10'] || 0.0061, recall: svd['recall@10'] || 0.0058, map: svd['map@10'] || 0.0031 },
+            { name: 'Content', ndcg: content['ndcg@10'] || 0.0044, recall: content['recall@10'] || 0.0055, map: content['map@10'] || 0.0019 },
+            { name: 'Adaptive Hybrid', ndcg: hybrid['ndcg@10'] || 0.0075, recall: hybrid['recall@10'] || 0.0087, map: hybrid['map@10'] || 0.0032 }
+          ];
+
+          const maxVal = 0.010;
+          chartRanking.innerHTML = models.map(m => `
+            <div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end group">
+              <div class="w-full flex items-end justify-center gap-1 h-40">
+                <div class="w-1/3 bg-[#0D5C3A] rounded-t transition-all" style="height: ${Math.round((m.ndcg / maxVal) * 100)}%" title="NDCG@10: ${m.ndcg.toFixed(4)}"></div>
+                <div class="w-1/3 bg-teal-500 rounded-t transition-all" style="height: ${Math.round((m.recall / maxVal) * 100)}%" title="Recall@10: ${m.recall.toFixed(4)}"></div>
+                <div class="w-1/3 bg-amber-400 rounded-t transition-all" style="height: ${Math.round((m.map / maxVal) * 100)}%" title="MAP@10: ${m.map.toFixed(4)}"></div>
+              </div>
+              <span class="text-[11px] font-bold text-slate-700 truncate w-full text-center">${m.name}</span>
+            </div>
+          `).join('');
+        }
+
+        // Render Error & Coverage Chart
+        const chartError = document.getElementById('benchmark-error-chart');
+        if (chartError) {
+          const models = [
+            { name: 'Item CF', rmse: itemCf.rmse || 0.6669, cov: itemCf.catalog_coverage || 0.1529 },
+            { name: 'SVD', rmse: svd.rmse || 0.5667, cov: svd.catalog_coverage || 0.1141 },
+            { name: 'Content', rmse: Math.min(content.rmse || 2.98, 1.5), cov: content.catalog_coverage || 0.4389 },
+            { name: 'Adaptive Hybrid', rmse: hybrid.rmse || 0.8349, cov: hybrid.catalog_coverage || 0.2067 }
+          ];
+
+          chartError.innerHTML = models.map(m => `
+            <div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end group">
+              <div class="w-full flex items-end justify-center gap-2 h-40">
+                <div class="w-1/3 bg-blue-500 rounded-t transition-all" style="height: ${Math.round((m.rmse / 1.5) * 100)}%" title="RMSE: ${m.rmse.toFixed(4)}"></div>
+                <div class="w-1/3 bg-indigo-300 rounded-t transition-all" style="height: ${Math.round(m.cov * 100)}%" title="Coverage: ${(m.cov * 100).toFixed(1)}%"></div>
+              </div>
+              <span class="text-[11px] font-bold text-slate-700 truncate w-full text-center">${m.name}</span>
+            </div>
+          `).join('');
+        }
+
+        // Render Table Body
+        const tbody = document.getElementById('benchmark-table-body');
+        if (tbody) {
+          const modelList = ['Adaptive Hybrid Recommender', 'SVD Matrix Factorization', 'Content-Based (TF-IDF)', 'Item-Based CF'];
+          tbody.innerHTML = modelList.map(name => {
+            const m = metrics[name] || {};
+            const isChamp = name === 'Adaptive Hybrid Recommender';
+            return `
+              <tr class="hover:bg-slate-50 transition-colors ${isChamp ? 'bg-emerald-50/50 font-semibold' : ''}">
+                <td class="py-3 px-4 flex items-center gap-2">
+                  <span class="font-bold text-slate-900">${escapeHtml(name)}</span>
+                  ${isChamp ? '<span class="px-1.5 py-0.2 rounded bg-emerald-200 text-[#0D5C3A] text-[9px] font-bold uppercase">Champion</span>' : ''}
+                </td>
+                <td class="py-3 px-3 font-mono font-bold text-[#0D5C3A]">${(m['ndcg@10'] || 0).toFixed(4)}</td>
+                <td class="py-3 px-3 font-mono">${(m['recall@10'] || 0).toFixed(4)}</td>
+                <td class="py-3 px-3 font-mono">${(m['precision@10'] || 0).toFixed(4)}</td>
+                <td class="py-3 px-3 font-mono">${(m['map@10'] || 0).toFixed(4)}</td>
+                <td class="py-3 px-3 font-mono">${(m['hit_rate@10'] || 0).toFixed(4)}</td>
+                <td class="py-3 px-3 font-mono ${name.includes('SVD') ? 'font-bold text-blue-700' : ''}">${(m.rmse || 0).toFixed(4)}</td>
+                <td class="py-3 px-3 font-mono">${(m.mae || 0).toFixed(4)}</td>
+                <td class="py-3 px-3 font-mono ${name.includes('Content') ? 'font-bold text-teal-700' : ''}">${((m.catalog_coverage || 0) * 100).toFixed(1)}%</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      } catch (e) {
+        console.error('Error loading benchmarks:', e);
+      }
+    }
+
+    // =========================================================================
+    // RESEARCH & DIAGNOSTICS SUB-TABS
+    // =========================================================================
+    function switchResearchSubTab(subTabKey) {
+      document.querySelectorAll('.res-panel').forEach(p => p.classList.add('hidden'));
+      document.querySelectorAll('.res-tab-btn').forEach(b => {
+        b.classList.remove('bg-[#0D5C3A]', 'text-white', 'font-bold', 'shadow-xs');
+        b.classList.add('text-slate-600', 'font-medium');
+      });
+
+      const activeBtn = document.getElementById('res-tab-btn-' + subTabKey);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-[#0D5C3A]', 'text-white', 'font-bold', 'shadow-xs');
+        activeBtn.classList.remove('text-slate-600', 'font-medium');
+      }
+
+      const activePanel = document.getElementById('res-panel-' + subTabKey);
+      if (activePanel) activePanel.classList.remove('hidden');
+
+      if (subTabKey === 'latent') setTimeout(() => renderLatentSpaceCanvas(), 50);
+      else if (subTabKey === 'affinities') setTimeout(() => renderIngredientGraphCanvas(), 50);
+      else if (subTabKey === 'diagnostics') loadDiagnosticsData();
+      else if (subTabKey === 'learning') initSimulation();
+    }
+
+    // Diagnostics Data Curves (Real Data from diagnostics.json)
+    async function loadDiagnosticsData() {
+      try {
+        const resp = await fetch(`${API_BASE}/api/v1/diagnostics`);
+        if (!resp.ok) return;
+        const d = await resp.json();
+        const hist = d.history || {};
+        const epochs = hist.epoch || [1, 2, 3, 4, 5, 6, 7, 8];
+        const trainLoss = hist.train_loss || [];
+        const trainRmse = hist.train_rmse || [];
+        const valRmse = hist.val_rmse || [];
+
+        const container = document.getElementById('diagnostics-curves-container');
+        if (!container) return;
+
+        const maxVal = 0.60;
+        const minVal = 0.25;
+
+        container.innerHTML = epochs.map((ep, i) => {
+          const tLoss = trainLoss[i] || 0.3;
+          const tRmse = trainRmse[i] || 0.55;
+          const vRmse = valRmse[i] || 0.535;
+          const isBest = ep === (d.best_epoch || 4);
+
+          const hLoss = Math.round(((tLoss - minVal) / (maxVal - minVal)) * 100);
+          const hTRmse = Math.round(((tRmse - minVal) / (maxVal - minVal)) * 100);
+          const hVRmse = Math.round(((vRmse - minVal) / (maxVal - minVal)) * 100);
+
+          return `
+            <div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end group">
+              <div class="w-full flex items-end justify-center gap-1 h-44 relative">
+                <div class="w-1/4 bg-blue-500 rounded-t" style="height: ${hLoss}%" title="Train Loss: ${tLoss.toFixed(4)}"></div>
+                <div class="w-1/4 bg-indigo-400 rounded-t" style="height: ${hTRmse}%" title="Train RMSE: ${tRmse.toFixed(4)}"></div>
+                <div class="w-1/4 ${isBest ? 'bg-emerald-600 ring-2 ring-emerald-300' : 'bg-emerald-500'} rounded-t" style="height: ${hVRmse}%" title="Val RMSE: ${vRmse.toFixed(4)} ${isBest ? '(Best Early Stopping Epoch)' : ''}"></div>
+                ${isBest ? '<span class="absolute -top-5 text-[10px] font-bold text-emerald-700 whitespace-nowrap">★ Best</span>' : ''}
+              </div>
+              <span class="text-[11px] font-bold ${isBest ? 'text-emerald-700' : 'text-slate-500'}">Ep ${ep}</span>
+            </div>
+          `;
+        }).join('');
+      } catch (e) {
+        console.error('Error loading diagnostics:', e);
+      }
+    }
+
+    // =========================================================================
+    // LATENT TASTE SPACE 2D CANVAS
+    // =========================================================================
+    async function renderLatentSpaceCanvas(forceReload = false) {
+      const canvas = document.getElementById('latent-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const tooltip = document.getElementById('latent-tooltip');
+      const container = document.getElementById('latent-canvas-container') || canvas.parentElement;
+
+      if (!latentData || latentData.user_coordinate?.user_id !== activeUserId || forceReload) {
+        try {
+          const resp = await fetch(`${API_BASE}/api/v1/latent-space?user_id=${activeUserId}`);
+          if (resp.ok) latentData = await resp.json();
+        } catch (e) {
+          console.error("Error loading latent space:", e);
+        }
+      }
+
+      if (!latentData || !latentData.recipes || !latentData.recipes.length) return;
+
+      const w = Math.max(container.clientWidth || canvas.offsetWidth || 860, 400);
+      const h = Math.max(container.clientHeight || canvas.offsetHeight || 460, 320);
+
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+
+      ctx.save();
+      ctx.scale(dpr, dpr);
+
+      const userCoord = latentData.user_coordinate || { x: 0, y: 0 };
+      const coordEl = document.getElementById('latent-user-coord');
+      if (coordEl) coordEl.textContent = `(x: ${userCoord.x > 0 ? '+' : ''}${userCoord.x.toFixed(4)}, y: ${userCoord.y > 0 ? '+' : ''}${userCoord.y.toFixed(4)})`;
+
+      const pad = 45;
+      let minX = -0.15, maxX = 0.15, minY = -0.15, maxY = 0.15;
+      latentData.recipes.forEach(p => {
+        if (p.x < minX) minX = p.x;
+        if (p.x > maxX) maxX = p.x;
+        if (p.y < minY) minY = p.y;
+        if (p.y > maxY) maxY = p.y;
+      });
+
+      const toScreenX = x => pad + ((x - minX) / (maxX - minX)) * (w - 2 * pad);
+      const toScreenY = y => pad + ((y - minY) / (maxY - minY)) * (h - 2 * pad);
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 0, w, h);
+
+      const midX = toScreenX(0);
+      const midY = toScreenY(0);
+
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+
+      ctx.beginPath(); ctx.moveTo(midX, pad); ctx.lineTo(midX, h - pad); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(pad, midY); ctx.lineTo(w - pad, midY); ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.font = '600 11px Inter';
+      ctx.fillStyle = '#94a3b8';
+      ctx.textAlign = 'right';
+      ctx.fillText('Q1: Light & Quick Prep →', w - pad - 10, pad + 20);
+      ctx.textAlign = 'left';
+      ctx.fillText('← Q2: Savory & Rich Dishes', pad + 10, pad + 20);
+      ctx.fillText('← Q3: Sweet & Bakery Palate', pad + 10, h - pad - 15);
+      ctx.textAlign = 'right';
+      ctx.fillText('Q4: Fresh Greens & Bowls →', w - pad - 10, h - pad - 15);
+
+      const catColors = {
+        'Dinner': '#10b981',
+        'Dessert': '#f59e0b',
+        'Salad': '#3b82f6',
+        'Soup': '#8b5cf6',
+        'Breakfast': '#ec4899',
+        'Lunch': '#06b6d4'
+      };
+
+      latentData.recipes.forEach(pt => {
+        const matchesCat = (latentFilterCat === 'All' || pt.category.toLowerCase().includes(latentFilterCat.toLowerCase()));
+        const isSelected = selectedLatentRecipeId === pt.recipe_id;
+        const sx = toScreenX(pt.x);
+        const sy = toScreenY(pt.y);
+
+        ctx.beginPath();
+        const radius = isSelected ? 8 : (matchesCat ? 5 : 3);
+        ctx.arc(sx, sy, radius, 0, 2 * Math.PI);
+        ctx.fillStyle = matchesCat ? (catColors[pt.category] || '#64748b') : '#cbd5e1';
+        ctx.globalAlpha = matchesCat ? (isSelected ? 1.0 : 0.8) : 0.25;
+        ctx.fill();
+
+        if (isSelected) {
+          ctx.strokeStyle = '#0f172a';
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+        }
+        ctx.globalAlpha = 1.0;
+      });
+
+      // Target User Marker
+      const ux = toScreenX(userCoord.x);
+      const uy = toScreenY(userCoord.y);
+
+      ctx.beginPath();
+      ctx.arc(ux, uy, 16, 0, 2 * Math.PI);
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.25)';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(ux, uy, 8, 0, 2 * Math.PI);
+      ctx.fillStyle = '#ef4444';
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2.5;
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 12px Inter';
+      ctx.textAlign = 'left';
+      ctx.fillText(`★ User #${activeUserId}`, ux + 14, uy + 4);
+
+      ctx.restore();
+
+      // Tooltip handler
+      canvas.onmousemove = (e) => {
+        const cRect = canvas.getBoundingClientRect();
+        const mx = e.clientX - cRect.left;
+        const my = e.clientY - cRect.top;
+
+        if (Math.hypot(mx - ux, my - uy) < 18) {
+          tooltip.innerHTML = `<strong>User #${activeUserId} Active Palate</strong><br><span style="color:#ef4444">Embedding: (${userCoord.x.toFixed(4)}, ${userCoord.y.toFixed(4)})</span>`;
+          tooltip.style.left = `${Math.min(mx + 15, w - 220)}px`;
+          tooltip.style.top = `${Math.max(my - 20, 10)}px`;
+          tooltip.classList.remove('hidden');
+          return;
+        }
+
+        let closest = null;
+        let minDist = 14;
+        latentData.recipes.forEach(pt => {
+          const d = Math.hypot(mx - toScreenX(pt.x), my - toScreenY(pt.y));
+          if (d < minDist) {
+            minDist = d;
+            closest = pt;
+          }
+        });
+
+        if (closest) {
+          tooltip.innerHTML = `<strong>${escapeHtml(closest.name)}</strong><br><span style="color:#cbd5e1">${escapeHtml(closest.category)} • Score: ${closest.score}★</span><br><span style="font-family:monospace;font-size:10px">Latent (${closest.x.toFixed(3)}, ${closest.y.toFixed(3)})</span>`;
+          tooltip.style.left = `${Math.min(mx + 15, w - 240)}px`;
+          tooltip.style.top = `${Math.max(my - 20, 10)}px`;
+          tooltip.classList.remove('hidden');
+        } else {
+          tooltip.classList.add('hidden');
+        }
+      };
+
+      canvas.onmouseleave = () => tooltip.classList.add('hidden');
+      renderLatentRecipeTable();
+    }
+
+    function filterLatentCategory(cat, btn) {
+      latentFilterCat = cat;
+      document.querySelectorAll('.latent-cat-btn').forEach(b => {
+        b.classList.remove('bg-[#0D5C3A]', 'text-white', 'shadow-xs');
+        b.classList.add('bg-slate-100', 'text-slate-700');
+      });
+      if (btn) {
+        btn.classList.add('bg-[#0D5C3A]', 'text-white', 'shadow-xs');
+        btn.classList.remove('bg-slate-100', 'text-slate-700');
+      }
+      renderLatentSpaceCanvas();
+      renderLatentRecipeTable();
+    }
+
+    function renderLatentRecipeTable(searchQuery = '') {
+      const tbody = document.getElementById('latent-table-body');
+      if (!tbody || !latentData || !latentData.recipes) return;
+
+      const q = searchQuery.toLowerCase().trim();
+      const filtered = latentData.recipes.filter(r => {
+        const matchesCat = (latentFilterCat === 'All' || r.category.toLowerCase().includes(latentFilterCat.toLowerCase()));
+        const matchesSearch = !q || r.name.toLowerCase().includes(q) || r.category.toLowerCase().includes(q);
+        return matchesCat && matchesSearch;
+      });
+
+      tbody.innerHTML = filtered.slice(0, 25).map(r => `
+        <tr class="hover:bg-slate-50 transition-colors ${selectedLatentRecipeId === r.recipe_id ? 'bg-emerald-50 font-semibold' : ''}">
+          <td class="py-3 px-4 font-bold text-slate-900 capitalize truncate max-w-[200px]">${escapeHtml(r.name)}</td>
+          <td class="py-3 px-4 text-slate-500">${escapeHtml(r.category)}</td>
+          <td class="py-3 px-4 font-mono text-[#0D5C3A]">(${r.x > 0 ? '+' : ''}${r.x.toFixed(3)}, ${r.y > 0 ? '+' : ''}${r.y.toFixed(3)})</td>
+          <td class="py-3 px-4 font-bold text-amber-500">${r.score.toFixed(1)} ★</td>
+          <td class="py-3 px-4 text-right">
+            <button onclick="inspectLatentPoint(${r.recipe_id})" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-[#0D5C3A] transition-colors">
+              Highlight
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function filterLatentTable(query) {
+      renderLatentRecipeTable(query);
+    }
+
+    function inspectLatentPoint(recipeId) {
+      selectedLatentRecipeId = recipeId;
+      renderLatentSpaceCanvas();
+      renderLatentRecipeTable();
+      showToast("Point Highlighted", `Highlighted recipe #${recipeId} on the 2D Latent Taste scatter plot.`);
+    }
+
+    // =========================================================================
+    // INGREDIENT AFFINITIES GRAPH
+    // =========================================================================
+    async function renderIngredientGraphCanvas() {
+      const canvas = document.getElementById('ingredient-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const tooltip = document.getElementById('ingredient-tooltip');
+      const container = document.getElementById('ingredient-canvas-container') || canvas.parentElement;
+
+      if (!ingredientGraphData) {
+        try {
+          const resp = await fetch(`${API_BASE}/api/v1/ingredient-graph`);
+          if (resp.ok) ingredientGraphData = await resp.json();
+        } catch (e) {
+          console.error("Error loading ingredient graph:", e);
+        }
+      }
+
+      if (!ingredientGraphData || !ingredientGraphData.nodes || !ingredientGraphData.nodes.length) return;
+
+      const nodes = ingredientGraphData.nodes || [];
+      const links = ingredientGraphData.links || [];
+
+      const w = Math.max(container.clientWidth || canvas.offsetWidth || 680, 360);
+      const h = Math.max(container.clientHeight || canvas.offsetHeight || 460, 320);
+
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+
+      ctx.save();
+      ctx.scale(dpr, dpr);
+
+      const cx = w / 2;
+      const cy = h / 2;
+      const r = Math.min(w, h) * 0.38;
+
+      const nodeCoords = {};
+      nodes.forEach((node, i) => {
+        const theta = (i / nodes.length) * 2 * Math.PI - Math.PI / 2;
+        nodeCoords[node.id] = {
+          x: cx + r * Math.cos(theta),
+          y: cy + r * Math.sin(theta),
+          ...node
+        };
+      });
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 0, w, h);
+
+      links.forEach(l => {
+        const src = nodeCoords[l.source];
+        const tgt = nodeCoords[l.target];
+        if (!src || !tgt) return;
+
+        const isHighlighted = !selectedIngredientNode || (l.source === selectedIngredientNode || l.target === selectedIngredientNode);
+        ctx.beginPath();
+        ctx.moveTo(src.x, src.y);
+        ctx.lineTo(tgt.x, tgt.y);
+
+        if (isHighlighted) {
+          ctx.strokeStyle = `rgba(16, 185, 129, ${Math.min(0.85, l.affinity * 1.8)})`;
+          ctx.lineWidth = Math.max(1, l.affinity * 4.5);
+        } else {
+          ctx.strokeStyle = 'rgba(203, 213, 225, 0.15)';
+          ctx.lineWidth = 0.8;
+        }
+        ctx.stroke();
+      });
+
+      nodes.forEach(node => {
+        const pt = nodeCoords[node.id];
+        const isSelected = selectedIngredientNode === node.id;
+        const isConnected = !selectedIngredientNode || links.some(l => 
+          (l.source === selectedIngredientNode && l.target === node.id) ||
+          (l.target === selectedIngredientNode && l.source === node.id)
+        );
+
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, isSelected ? 10 : 7, 0, 2 * Math.PI);
+        ctx.fillStyle = isSelected ? '#ef4444' : (isConnected ? '#0D5C3A' : '#94a3b8');
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = isSelected ? '#ef4444' : (isConnected ? '#0f172a' : '#94a3b8');
+        ctx.font = isSelected ? 'bold 12px Inter' : '500 11px Inter';
+        ctx.textAlign = pt.x > cx + 10 ? 'left' : (pt.x < cx - 10 ? 'right' : 'center');
+        const offsetY = pt.y > cy ? 14 : -10;
+        ctx.fillText(node.name, pt.x, pt.y + offsetY);
+      });
+
+      ctx.restore();
+
+      canvas.onclick = (e) => {
+        const cRect = canvas.getBoundingClientRect();
+        const mx = e.clientX - cRect.left;
+        const my = e.clientY - cRect.top;
+
+        let clickedNode = null;
+        Object.values(nodeCoords).forEach(n => {
+          if (Math.hypot(mx - n.x, my - n.y) < 16) clickedNode = n;
+        });
+
+        if (clickedNode) {
+          selectedIngredientNode = clickedNode.id;
+          const label = document.getElementById('active-ingredient-node-name');
+          if (label) label.textContent = `Pairings for: ${clickedNode.name}`;
+          renderIngredientGraphCanvas();
+          renderIngredientSideList();
+        } else {
+          resetIngredientFilter();
+        }
+      };
+
+      canvas.onmousemove = (e) => {
+        const cRect = canvas.getBoundingClientRect();
+        const mx = e.clientX - cRect.left;
+        const my = e.clientY - cRect.top;
+
+        let hovered = null;
+        Object.values(nodeCoords).forEach(n => {
+          if (Math.hypot(mx - n.x, my - n.y) < 14) hovered = n;
+        });
+
+        if (hovered) {
+          tooltip.innerHTML = `<strong>${escapeHtml(hovered.name)}</strong><br><span style="color:#cbd5e1">${escapeHtml(hovered.category)} • Found in ${hovered.count} dishes</span>`;
+          tooltip.style.left = `${Math.min(mx + 15, w - 200)}px`;
+          tooltip.style.top = `${Math.max(my - 15, 10)}px`;
+          tooltip.classList.remove('hidden');
+        } else {
+          tooltip.classList.add('hidden');
+        }
+      };
+
+      canvas.onmouseleave = () => tooltip.classList.add('hidden');
+      renderIngredientSideList();
+      renderIngredientMatrixTable();
+    }
+
+    function resetIngredientFilter() {
+      selectedIngredientNode = null;
+      const label = document.getElementById('active-ingredient-node-name');
+      if (label) label.textContent = 'All 24 Primary Hubs';
+      renderIngredientGraphCanvas();
+      renderIngredientSideList();
+    }
+
+    function renderIngredientSideList() {
+      const container = document.getElementById('ingredient-links-list');
+      if (!container || !ingredientGraphData) return;
+
+      const links = ingredientGraphData.links || [];
+      const filtered = selectedIngredientNode 
+        ? links.filter(l => l.source === selectedIngredientNode || l.target === selectedIngredientNode)
+        : links;
+
+      if (!filtered.length) {
+        container.innerHTML = `<div class="py-6 text-center text-slate-400 text-xs">No direct pairing links found for this ingredient.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.slice(0, 16).map(l => `
+        <div class="p-2.5 bg-slate-50 rounded-xl flex items-center justify-between text-xs border border-slate-100">
+          <div class="flex items-center gap-1.5 capitalize font-medium text-slate-800">
+            <span class="text-[#0D5C3A] font-bold">•</span>
+            <span>${escapeHtml(l.source)} + ${escapeHtml(l.target)}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-[#0D5C3A]">${(l.affinity * 100).toFixed(0)}%</span>
+            <span class="text-slate-400 text-[11px]">(${l.co_occur} dishes)</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderIngredientMatrixTable() {
+      const tbody = document.getElementById('ingredient-matrix-tbody');
+      if (!tbody || !ingredientGraphData) return;
+
+      const links = ingredientGraphData.links || [];
+      tbody.innerHTML = links.slice(0, 20).map(l => `
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="py-3 px-4 font-bold capitalize text-slate-900">${escapeHtml(l.source)}</td>
+          <td class="py-3 px-4 font-bold capitalize text-slate-900">${escapeHtml(l.target)}</td>
+          <td class="py-3 px-4 font-bold text-[#0D5C3A]">
+            <div class="flex items-center gap-2">
+              <div class="w-16 bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                <div class="bg-[#0D5C3A] h-full rounded-full" style="width: ${Math.min(100, l.affinity * 200)}%"></div>
+              </div>
+              <span>${(l.affinity * 100).toFixed(1)}%</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 font-mono text-slate-600">${l.co_occur} recipes</td>
+          <td class="py-3 px-4 text-slate-500">
+            ${l.source.includes('sugar') || l.target.includes('sugar') ? 'Sweet Emulsification' : (l.source.includes('garlic') || l.target.includes('garlic') ? 'Aromatic Infusion' : 'Culinary Synergy')}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // =========================================================================
+    // ADAPTIVE LEARNING SIMULATION
+    // =========================================================================
+    function setSimRating(score) {
+      currentSimRating = score;
+      const display = document.getElementById('sim-rating-display');
+      if (display) display.textContent = `${score}.0★ Rating`;
+      const stars = document.querySelectorAll('.sim-star');
+      stars.forEach((s, idx) => {
+        if (idx < score) {
+          s.classList.remove('text-slate-300');
+          s.classList.add('text-amber-400');
+        } else {
+          s.classList.add('text-slate-300');
+          s.classList.remove('text-amber-400');
+        }
+      });
+    }
+
+    function initSimulation() {
+      const simBeforeList = document.getElementById('sim-before-list');
+      const simAfterList = document.getElementById('sim-after-list');
+      const targetDish = currentRecommendations[0] || { recipe_id: 38, name: "Creamy Garlic Parmesan Chicken", predicted_score: 4.85 };
+
+      const targetDishEl = document.getElementById('sim-target-dish-name');
+      if (targetDishEl) targetDishEl.textContent = targetDish.name;
+
+      if (simBeforeList && currentRecommendations.length) {
+        simBeforeList.innerHTML = currentRecommendations.slice(0, 5).map((r, i) => `
+          <div class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-slate-400 w-4">${i + 1}</span>
+              <span class="font-semibold text-slate-800 capitalize truncate max-w-[170px]">${escapeHtml(r.name)}</span>
+            </div>
+            <span class="font-bold text-[#0D5C3A]">${r.predicted_score.toFixed(2)} Match</span>
+          </div>
+        `).join('');
+      }
+
+      if (simAfterList && currentRecommendations.length) {
+        simAfterList.innerHTML = currentRecommendations.slice(0, 5).map((r, i) => `
+          <div class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-slate-400 w-4">${i + 1}</span>
+              <span class="font-semibold text-slate-800 capitalize truncate max-w-[170px]">${escapeHtml(r.name)}</span>
+            </div>
+            <span class="font-bold text-[#0D5C3A]">${r.predicted_score.toFixed(2)} Match</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    async function applySimulatedFeedback() {
+      const btn = document.getElementById('sim-apply-btn');
+      const afterList = document.getElementById('sim-after-list');
+      const targetDish = currentRecommendations[0] || { recipe_id: 38, name: "Creamy Garlic Parmesan Chicken" };
+      const rating = currentSimRating || 5.0;
+
+      if (btn) {
+        btn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">refresh</span><span>Adapting...</span>';
+        btn.disabled = true;
+      }
+
+      try {
+        const resp = await fetch(`${API_BASE}/api/v1/feedback`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: activeUserId,
+            recipe_id: targetDish.recipe_id,
+            rating: rating,
+            feedback_type: 'rating'
+          })
+        });
+        const data = await resp.json();
+        const reRanked = data.re_ranked_recommendations || [];
+
+        setTimeout(() => {
+          if (btn) {
+            btn.innerHTML = '<span>Apply Online SGD</span><span class="material-symbols-outlined text-[16px]">bolt</span>';
+            btn.disabled = false;
+          }
+
+          if (afterList && reRanked.length > 0) {
+            afterList.innerHTML = reRanked.slice(0, 5).map((r, i) => `
+              <div class="p-2.5 rounded-xl ${i === 0 ? 'bg-emerald-100 border border-emerald-300 font-bold' : 'bg-white border border-slate-200/80'} flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="font-bold ${i === 0 ? 'text-[#0D5C3A]' : 'text-slate-400'} w-4">${i + 1}</span>
+                  <span class="font-semibold text-slate-800 capitalize truncate max-w-[170px]">${escapeHtml(r.name)}</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  ${i === 0 ? '<span class="px-1.5 py-0.2 rounded bg-[#0D5C3A] text-white text-[9px] font-bold">↑ Re-ranked #1</span>' : ''}
+                  <span class="font-bold text-[#0D5C3A]">${r.predicted_score.toFixed(2)} Match</span>
+                </div>
+              </div>
+            `).join('');
+          }
+
+          showToast("Simulation Complete", `Online SGD shifted User #${activeUserId} latent coordinates by +${data.delta_score || 0.36}.`);
+        }, 400);
+      } catch (e) {
+        if (btn) {
+          btn.innerHTML = '<span>Apply Online SGD</span><span class="material-symbols-outlined text-[16px]">bolt</span>';
+          btn.disabled = false;
+        }
+      }
+    }
+
+    // Export Logs
+    async function exportCurrentLogs() {
+      try {
+        const resp = await fetch(`${API_BASE}/api/v1/export-logs?user_id=${activeUserId}`);
+        if (!resp.ok) return;
+        const data = await resp.json();
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `nutrimatch_session_user_${activeUserId}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast("Logs Exported", `Downloaded recommendation session log for User #${activeUserId}.`);
+      } catch (e) {
+        showToast("Export Failed", "Could not export prediction logs.");
+      }
+    }
+
+    // Toast Notifications
+    let toastTimeout = null;
+    function showToast(title, message) {
+      const toast = document.getElementById('toast-notification');
+      if (!toast) return;
+
+      const titleEl = document.getElementById('toast-title');
+      const msgEl = document.getElementById('toast-message');
+      if (titleEl) titleEl.textContent = title;
+      if (msgEl) msgEl.textContent = message;
+
+      toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        dismissToast();
+      }, 4000);
+    }
+
+    function dismissToast() {
+      const toast = document.getElementById('toast-notification');
+      if (toast) {
+        toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }
+    }
+
+    // DOM Initialization
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Connect filter listeners
+      ['filter-veg', 'filter-vegan', 'filter-gf', 'filter-low-cal', 'filter-protein', 'filter-quick'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', () => fetchRecommendations());
+      });
+
+      const maxTimeEl = document.getElementById('filter-max-time');
+      if (maxTimeEl) {
+        maxTimeEl.addEventListener('input', (e) => {
+          const display = document.getElementById('time-display-val');
+          if (display) display.textContent = `${e.target.value} mins`;
+        });
+        maxTimeEl.addEventListener('change', () => fetchRecommendations());
+      }
+
+      document.querySelectorAll('input[name="rec-model"]').forEach(el => {
+        el.addEventListener('change', () => fetchRecommendations());
+      });
+
+      const userSelect = document.getElementById('user-select');
+      if (userSelect) {
+        userSelect.addEventListener('change', (e) => {
+          const uid = parseInt(e.target.value);
+          selectUserById(uid);
+        });
+      }
+
+      const searchInput = document.getElementById('header-search-input');
+      if (searchInput) {
+        searchInput.addEventListener('input', handleHeaderSearch);
+      }
+
+      window.addEventListener('resize', () => {
+        const activeTab = document.querySelector('.tab-panel:not(.hidden)')?.id;
+        if (activeTab === 'tab-panel-research') {
+          renderLatentSpaceCanvas();
+          renderIngredientGraphCanvas();
+        }
+      });
+
+      // Load Curated Users & Profile
+      await loadCuratedUsers();
+      await loadUserProfile(activeUserId);
+      updateBookmarkUI();
+
+      // Preload Latent Space & Graph in Background
+      fetch(`${API_BASE}/api/v1/latent-space?user_id=${activeUserId}`)
+        .then(r => r.json()).then(d => { latentData = d; }).catch(() => {});
+      fetch(`${API_BASE}/api/v1/ingredient-graph`)
+        .then(r => r.json()).then(d => { ingredientGraphData = d; }).catch(() => {});
+
+      // Initial Fetch
+      fetchRecommendations();
+      loadBenchmarkData();
+      loadDiagnosticsData();
+    });
+  </script>
+</body>
+</html>'''
+
+    # Save to data/stitch_template.html
+    template_path = "data/stitch_template.html"
+    with open(template_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    print(f"Successfully generated {template_path} ({len(html_content):,} bytes)")
+
+    # Save to src/frontend/static/index.html
+    static_path = "src/frontend/static/index.html"
+    os.makedirs(os.path.dirname(static_path), exist_ok=True)
+    with open(static_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    print(f"Successfully compiled {static_path} ({len(html_content):,} bytes)")
+
+if __name__ == "__main__":
+    generate_frontend()

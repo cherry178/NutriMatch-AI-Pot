@@ -1,0 +1,79 @@
+{
+  "champion_model": "Adaptive Hybrid Recommender",
+  "ranking": [
+    "Adaptive Hybrid Recommender",
+    "SVD Matrix Factorization",
+    "Content-Based (TF-IDF)",
+    "Item-Based CF"
+  ],
+  "metrics": {
+    "Item-Based CF": {
+      "model_name": "Item-Based CF",
+      "rmse": 0.6669,
+      "mae": 0.3775,
+      "map@10": 0.0014,
+      "hit_rate@10": 0.02,
+      "catalog_coverage": 0.1529,
+      "precision@5": 0.0025,
+      "recall@5": 0.0037,
+      "ndcg@5": 0.0025,
+      "precision@10": 0.002,
+      "recall@10": 0.0064,
+      "ndcg@10": 0.0036,
+      "precision@20": 0.0025,
+      "recall@20": 0.0162,
+      "ndcg@20": 0.0069
+    },
+    "SVD Matrix Factorization": {
+      "model_name": "SVD Matrix Factorization",
+      "rmse": 0.5667,
+      "mae": 0.3678,
+      "map@10": 0.0031,
+      "hit_rate@10": 0.025,
+      "catalog_coverage": 0.1141,
+      "precision@5": 0.0045,
+      "recall@5": 0.0052,
+      "ndcg@5": 0.0064,
+      "precision@10": 0.0025,
+      "recall@10": 0.0058,
+      "ndcg@10": 0.0061,
+      "precision@20": 0.0029,
+      "recall@20": 0.0122,
+      "ndcg@20": 0.0084
+    },
+    "Content-Based (TF-IDF)": {
+      "model_name": "Content-Based (TF-IDF)",
+      "rmse": 2.9876,
+      "mae": 2.9213,
+      "map@10": 0.0019,
+      "hit_rate@10": 0.025,
+      "catalog_coverage": 0.4389,
+      "precision@5": 0.0035,
+      "recall@5": 0.0034,
+      "ndcg@5": 0.0037,
+      "precision@10": 0.0028,
+      "recall@10": 0.0055,
+      "ndcg@10": 0.0044,
+      "precision@20": 0.0028,
+      "recall@20": 0.0097,
+      "ndcg@20": 0.0059
+    },
+    "Adaptive Hybrid Recommender": {
+      "model_name": "Adaptive Hybrid Recommender",
+      "rmse": 0.8349,
+      "mae": 0.7577,
+      "map@10": 0.0032,
+      "hit_rate@10": 0.0425,
+      "catalog_coverage": 0.2067,
+      "precision@5": 0.0045,
+      "recall@5": 0.0043,
+      "ndcg@5": 0.006,
+      "precision@10": 0.0045,
+      "recall@10": 0.0087,
+      "ndcg@10": 0.0075,
+      "precision@20": 0.0035,
+      "recall@20": 0.0128,
+      "ndcg@20": 0.0087
+    }
+  }
+}

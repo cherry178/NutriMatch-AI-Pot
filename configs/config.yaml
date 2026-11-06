@@ -1,0 +1,64 @@
+# ==============================================================================
+# Adaptive Personalized Recipe Recommendation Engine Configuration
+# ==============================================================================
+
+project:
+  name: "Adaptive Personalized Recipe Recommendation Engine"
+  version: "1.0.0"
+  description: "Industry-grade RecSys based on Food.com dataset from RUCAIBox/RecSysDatasets"
+  seed: 42
+
+paths:
+  raw_interactions: "data/raw/interactions.parquet"
+  raw_recipes: "data/raw/recipes.csv"
+  processed_dir: "data/processed"
+  recbole_atomic_dir: "data/recbole_atomic"
+  models_dir: "models_saved"
+  train_interactions: "data/processed/train.parquet"
+  val_interactions: "data/processed/val.parquet"
+  test_interactions: "data/processed/test.parquet"
+  processed_recipes: "data/processed/recipes_clean.parquet"
+  benchmark_results: "models_saved/benchmark_results.json"
+  diagnostics: "models_saved/diagnostics.json"
+
+preprocessing:
+  min_user_interactions: 15
+  min_recipe_interactions: 15
+  max_recipes_subset: 5000
+  rating_threshold_positive: 4.0   # Ratings >= 4.0 considered relevant/positive for Precision/Recall/NDCG
+
+splitting:
+  train_ratio: 0.70
+  val_ratio: 0.15
+  test_ratio: 0.15
+  strategy: "stratified_user"      # Ensures all test users have representation in train
+
+models:
+  svd:
+    n_factors: 32
+    learning_rate: 0.01
+    reg: 0.05                     # L2 regularization to prevent overfitting
+    n_epochs: 30
+    patience: 4                   # Early stopping patience
+    min_rating: 1.0
+    max_rating: 5.0
+    
+  item_cf:
+    k_neighbors: 30
+    similarity_metric: "cosine"
+    shrinkage: 10.0               # Shrinkage regularization to prevent spurious similarity on rare items
+
+  content_based:
+    max_features: 4000
+    stop_words: "english"
+    ngram_range: [1, 2]
+
+  hybrid:
+    svd_weight: 0.50
+    item_cf_weight: 0.30
+    content_weight: 0.20
+    adaptive_step_size: 0.05      # Online adaptation rate for real-time feedback
+
+evaluation:
+  top_k_list: [5, 10, 20]
+  eval_users_sample: 500          # Fast & statistically rigorous evaluation sample size
